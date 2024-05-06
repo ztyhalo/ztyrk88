@@ -904,9 +904,15 @@ struct phy_device *get_phy_device(struct mii_bus *bus, int addr, bool is_c45)
 	memset(c45_ids.device_ids, 0xff, sizeof(c45_ids.device_ids));
 
 	if (is_c45)
+	{
 		r = get_phy_c45_ids(bus, addr, &c45_ids);
+		printk("hndz c45 get phyid is 0x%x!\n", c45_ids.devices_in_package);
+	}
 	else
+	{
 		r = get_phy_c22_id(bus, addr, &phy_id);
+		printk("hndz get phyid is 0x%x!\n", phy_id);
+	}
 
 	if (r)
 		return ERR_PTR(r);

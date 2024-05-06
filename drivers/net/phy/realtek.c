@@ -178,12 +178,44 @@ static int rtl8211c_config_init(struct phy_device *phydev)
 			    CTL1000_ENABLE_MASTER | CTL1000_AS_MASTER);
 }
 
+
+
+static int rtl8211f_config_aneg(struct phy_device *phydev)
+{
+	int ret;
+	u16 val;
+
+	printk("hndz rtl8211f_config_aneg!\n");
+
+
+	ret = genphy_config_aneg(phydev);
+
+	if (ret < 0)
+		return ret;
+	printk("hndz config aneg ret 0x%x!\n", ret);
+
+	val = phy_read(phydev, 0x00);
+	printk("hndz conig aneg bmcr is 0x%x!\n", val);
+
+	return 0;
+}
+
 static int rtl8211f_config_init(struct phy_device *phydev)
 {
 	struct device *dev = &phydev->mdio.dev;
 	u16 val_txdly, val_rxdly;
 	u16 val;
 	int ret;
+
+	printk("hndz rtl8211f_config_init!\n");
+
+	phydev->autoneg = AUTONEG_DISABLE;
+	phydev->speed = 100;
+	phydev->duplex = DUPLEX_FULL;
+
+	// val = phy_read(phydev, 0x00);
+	// printk("hndz bmcr is 0x%x!\n", val);
+
 
 	val = RTL8211F_ALDPS_ENABLE | RTL8211F_ALDPS_PLL_OFF | RTL8211F_ALDPS_XTAL_OFF;
 	phy_modify_paged_changed(phydev, 0xa43, RTL8211F_PHYCR1, val, val);
@@ -633,6 +665,7 @@ static struct phy_driver realtek_drvs[] = {
 	}, {
 		PHY_ID_MATCH_EXACT(0x001cc916),
 		.name		= "RTL8211F Gigabit Ethernet",
+		.config_aneg = &rtl8211f_config_aneg,
 		.config_init	= &rtl8211f_config_init,
 		.ack_interrupt	= &rtl8211f_ack_interrupt,
 		.config_intr	= &rtl8211f_config_intr,

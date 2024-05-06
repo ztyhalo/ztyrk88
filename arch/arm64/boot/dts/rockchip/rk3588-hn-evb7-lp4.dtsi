@@ -10,7 +10,7 @@
 #include "rk3588-rk806-single.dtsi"
 
 #include "topeet_screen_lcds.dts"
-#include "topeet_camera_config.dtsi"
+//#include "topeet_camera_config.dtsi"
 
 / {
 	/* If hdmirx node is disabled, delete the reserved-memory node here. */
@@ -65,6 +65,7 @@
 		};
 	};
 
+#if 0
 	fan: pwm-fan {
 		compatible = "pwm-fan";
 		#cooling-cells = <2>;
@@ -83,7 +84,7 @@
 		simple-audio-card,name = "rockchip,hdmiin";
 		simple-audio-card,bitclock-master = <&dailink0_master>;
 		simple-audio-card,frame-master = <&dailink0_master>;
-		status = "okay";
+		status = "disabled";
 		simple-audio-card,cpu {
 			sound-dai = <&i2s7_8ch>;
 		};
@@ -91,7 +92,7 @@
 			sound-dai = <&hdmiin_dc>;
 		};
 	};
-
+#endif
 	pcie20_avdd0v85: pcie20-avdd0v85 {
 		compatible = "regulator-fixed";
 		regulator-name = "pcie20_avdd0v85";
@@ -173,6 +174,7 @@
 		vin-supply = <&vcc12v_dcin>;
 	};
 
+#if 0
 	vcc5v0_host: vcc5v0-host {
 		compatible = "regulator-fixed";
 		regulator-name = "vcc5v0_host";
@@ -186,7 +188,38 @@
 		pinctrl-names = "default";
 		pinctrl-0 = <&vcc5v0_host_en>;
 	};
-	
+#endif
+
+/*
+	vcc_mipicsi0: vcc-mipicsi0-regulator {
+		compatible = "regulator-fixed";
+		gpio = <&gpio1 RK_PD2 GPIO_ACTIVE_HIGH>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&mipicsi0_pwr>;
+		regulator-name = "vcc_mipicsi0";
+		enable-active-high;
+	};
+
+	vcc_mipicsi1: vcc-mipicsi1-regulator {
+		compatible = "regulator-fixed";
+		gpio = <&gpio1 RK_PD3 GPIO_ACTIVE_HIGH>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&mipicsi1_pwr>;
+		regulator-name = "vcc_mipicsi1";
+		enable-active-high;
+	};
+
+	vcc_mipidcphy0: vcc-mipidcphy0-regulator {
+		compatible = "regulator-fixed";
+		gpio = <&gpio2 RK_PC4 GPIO_ACTIVE_HIGH>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&mipidcphy0_pwr>;
+		regulator-name = "vcc_mipidcphy0";
+		enable-active-high;
+	};
+*/
+
+#if 0
 	vcc_3v3_sd_s0: vcc-3v3-sd-s0-regulator {
 		compatible = "regulator-fixed";
 		gpio = <&gpio0 RK_PB7 GPIO_ACTIVE_HIGH>;
@@ -195,6 +228,7 @@
 		regulator-name = "vcc_3v3_sd_s0";
 		enable-active-high;
 	};
+#endif
 
 	vbus5v0_typec: vbus5v0-typec {
                 compatible = "regulator-fixed";
@@ -220,7 +254,7 @@
 
 /* Should work with at least 128MB cma reserved above. */
 &hdmirx_ctrler {
-	status = "okay";
+	status = "disabled";
 
 	/* Effective level used to trigger HPD: 0-low, 1-high */
 	hpd-trigger-level = <1>;
@@ -230,11 +264,11 @@
 };
 
 &hdptxphy_hdmi0 {
-	status = "okay";
+	status = "disabled";
 };
 
 &hdptxphy_hdmi1 {
-	status = "okay";
+	status = "disabled";
 };
 
 &i2c0 {
@@ -319,7 +353,7 @@
                 pinctrl-names = "default";
                 pinctrl-0 = <&usbc0_int>;
                 vbus-supply = <&vbus5v0_typec>;
-                status = "okay";
+                status = "disable";
 
                 ports {
                         #address-cells = <1>;
@@ -375,6 +409,18 @@
                         };
                 };
         };
+
+	pcf8563: pcf8563@51{
+        compatible = "nxp,pcf8563";
+        reg = <0x51>;
+		#clock-cells = <0>;
+		clock-frequency = <32768>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&pcf8563_int>;
+		interrupt-parent = <&gpio0>;
+		interrupts = <RK_PB0 IRQ_TYPE_LEVEL_LOW>;
+		wakeup-source;
+        };       
 };
 
 &i2c7 {
@@ -395,15 +441,15 @@
 };
 
 &i2s5_8ch {
-	status = "okay";
+	status = "disabled";
 };
 
 &i2s6_8ch {
-	status = "okay";
+	status = "disabled";
 };
 
 &i2s7_8ch {
-	status = "okay";
+	status = "disabled";
 };
 
 &mdio0 {
@@ -414,9 +460,9 @@
 };
 
 &mdio1 {
-	rgmii_phy1: phy@1 {
-		compatible = "ethernet-phy-ieee802.3-c22";
-		reg = <0x1>;
+	rgmii_phy1: phy@0 {
+		compatible = "ethernet-phy-idae02.503a", "ethernet-phy-ieee802.3-c45";
+		reg = <0x0>;
 	};
 };
 
@@ -435,14 +481,14 @@
 
 &pcie30phy {
 	rockchip,pcie30-phymode = <PHY_MODE_PCIE_NANBNB>;
-	status = "okay";
+	status = "disabled";
 };
 
 &pcie3x4 {
 	num-lanes = <2>;
 	reset-gpios = <&gpio4 RK_PB6 GPIO_ACTIVE_HIGH>;
 	vpcie3v3-supply = <&vcc3v3_pcie30>;
-	status = "okay";
+	status = "disabled";
 };
 
 &pinctrl {
@@ -482,8 +528,9 @@
 		};
 	};
 
-	hym8563 {
-		hym8563_int: hym8563-int {
+    //0918
+	pcf8563 {
+		pcf8563_int: pcf8563-int {
 			rockchip,pins = <0 RK_PB0 RK_FUNC_GPIO &pcfg_pull_up>;
 		};
 	};
@@ -527,30 +574,33 @@
 };
 
 &pwm1 {
-	status = "okay";
+	status = "disable"; //失能pwm1，于can0引脚冲突
 };
 
 &pwm3 {
 	pinctrl-0 = <&pwm3m1_pins>;
-	status = "okay";
+	status = "disabled";
 };
 
 
 &sata0 {
-	status = "okay";
+	status = "disabled";
 };
 
 &sdmmc {
 	status = "okay";
-	vmmc-supply = <&vcc_3v3_sd_s0>;
+ 	//cd-gpios = <&gpio0 RK_PA1 GPIO_ACTIVE_LOW>;
+    non-removable;
+	//vmmc-supply = <&vcc_3v3_sd_s0>;
 };
 
 &u2phy0_otg {
-	status = "okay";
-	phy-supply = <&vcc5v0_host>;
+	status = "disable";
+	//phy-supply = <&vcc5v0_host>;
 	rockchip,typec-vbus-det;
 };
 
+#if 0
 &u2phy1_otg {
 	phy-supply = <&vcc5v0_host>;
 };
@@ -562,9 +612,10 @@
 &u2phy3_host {
 	phy-supply = <&vcc5v0_host>;
 };
+#endif
 
 &usbdp_phy0 {
-	status = "okay";
+	status = "disable";
 	orientation-switch;
         svid = <0xff01>;
         sbu1-dc-gpios = <&gpio4 RK_PA6 GPIO_ACTIVE_HIGH>;
@@ -586,30 +637,30 @@
 };
 
 &usbdp_phy0_dp {
-	status = "okay";
+	status = "disable";
 };
 
 &usbdp_phy0_u3 {
-	status = "okay";
+	status = "disable";
 };
 
 &usbdp_phy1 {
 	rockchip,dp-lane-mux = <2 3>;
-	status = "okay";
+	status = "disabled";
 };
 
 &usbdp_phy1_dp {
-	status = "okay";
+	status = "disabled";
 };
 
 &usbdp_phy1_u3 {
 	maximum-speed = "high-speed";
-	status = "okay";
+	status = "disabled";
 };
 
 &usbdrd_dwc3_0 {
 	dr_mode = "otg";
-	status = "okay";
+	status = "disable";
 	usb-role-switch;
         port {
                 #address-cells = <1>;
@@ -624,15 +675,15 @@
 &usbdrd_dwc3_1 {
 	dr_mode = "host";
 //	maximum-speed = "high-speed";
-	status = "okay";
+	status = "disabled";
 };
 
 //5G 
 &combphy2_psu {
-	status = "okay";
+	status = "disabled";
 };
 &usbhost3_0 {
-	status = "okay";
+	status = "disabled";
 };
 
 

@@ -276,6 +276,29 @@ static int rtl8211f_config_init(struct phy_device *phydev)
 	return 0;
 }
 
+static int rtl8211f_read_status(struct phy_device *phydev)
+{
+	int status;
+
+	/* Read link and autonegotiation status */
+	status = phy_read(phydev, MII_BMSR);
+
+	if (status < 0)
+		return status;
+
+	if ((status & BMSR_LSTATUS) == 0)
+		phydev->link = 0;
+	else
+		phydev->link = 1;
+
+	phydev->speed = SPEED_100;
+	phydev->duplex = DUPLEX_FULL;
+
+	phydev->pause = phydev->asym_pause = 0;
+	return 0;
+
+}
+
 static int rtl821x_resume(struct phy_device *phydev)
 {
 	int ret;
@@ -667,6 +690,7 @@ static struct phy_driver realtek_drvs[] = {
 		.config_init	= &rtl8211f_config_init,
 		.ack_interrupt	= &rtl8211f_ack_interrupt,
 		.config_intr	= &rtl8211f_config_intr,
+		.read_status = &rtl8211f_read_status,
 		.suspend	= genphy_suspend,
 		.resume		= rtl821x_resume,
 		.read_page	= rtl821x_read_page,

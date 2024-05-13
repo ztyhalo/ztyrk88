@@ -58,24 +58,23 @@
 
 &gmac1 {
 	/* Use rgmii-rxid mode to disable rx delay inside Soc */
-	phy-mode = "rgmii-rxid";
+	/*phy-mode = "rgmii-rxid"; */
+	phy-mode = "rgmii";
 	clock_in_out = "output";
 
-	//snps,reset-gpio = <&gpio3 RK_PB7 GPIO_ACTIVE_LOW>;
+	snps,reset-gpio = <&gpio3 RK_PB7 GPIO_ACTIVE_LOW>;
 	snps,reset-active-low;
 	/* Reset time is 20ms, 100ms for rtl8211f */
-	snps,reset-delays-us = <0 20000 100000>;
+	snps,reset-delays-us = <0 500000 100000>;
 
 	pinctrl-names = "default";
 	pinctrl-0 = <&gmac1_miim
 		     &gmac1_tx_bus2
 		     &gmac1_rx_bus2
 		     &gmac1_rgmii_clk
-		     &gmac1_rgmii_bus
-		     &eth1_pins
-		     &gmac1_clkinout>;
+		     &gmac1_rgmii_bus>;
 
-	tx_delay = <0x43>;
+	/*tx_delay = <0x43>;*/
 	/* rx_delay = <0x3f>; */
 
 	phy-handle = <&rgmii_phy1>;

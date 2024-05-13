@@ -213,13 +213,11 @@ static int rtl8211f_config_init(struct phy_device *phydev)
 	phydev->speed = 100;
 	phydev->duplex = DUPLEX_FULL;
 
-	// val = phy_read(phydev, 0x00);
-	// printk("hndz bmcr is 0x%x!\n", val);
-
 
 	val = RTL8211F_ALDPS_ENABLE | RTL8211F_ALDPS_PLL_OFF | RTL8211F_ALDPS_XTAL_OFF;
 	phy_modify_paged_changed(phydev, 0xa43, RTL8211F_PHYCR1, val, val);
 
+	printk("hndz rtl8211f phydev interface is %d!\n", phydev->interface);
 	switch (phydev->interface) {
 	case PHY_INTERFACE_MODE_RGMII:
 		val_txdly = 0;

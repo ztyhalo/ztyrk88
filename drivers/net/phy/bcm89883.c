@@ -79,8 +79,7 @@ static int bcm89883_get_features(struct phy_device *phydev)
 
 static int bcm89883_config_init(struct phy_device *phydev)
 {
-    // printk(KERN_INFO "phydev->interface: %d, Line: %d, Fun: %s\n",
-    //                  phydev->interface, __LINE__, __func__);
+
 	int val = 0;
 	unsigned int features = 0;
 
@@ -98,16 +97,10 @@ static int bcm89883_config_init(struct phy_device *phydev)
 		| SUPPORTED_AUI | SUPPORTED_FIBRE |
 		SUPPORTED_BNC);
 
-	// phydev->advertising = SUPPORTED_10000baseT_Full;
-
-	// printk("zty phy mdio dev addr 0x%x!\n", phydev->mdio.addr);
-
 	val = phy_read_mmd(phydev, MDIO_MMD_AN, 0x0200);
-	// printk("zty neg val 0x%x!\n", val);
 
 	if(val & (1 << 12))
 	{
-		// printk("zty rxd3 hight autoneg!\n");
 		phydev->autoneg = AUTONEG_ENABLE;
 		features |= SUPPORTED_Autoneg;
 		autoneg = 1;
@@ -115,7 +108,6 @@ static int bcm89883_config_init(struct phy_device *phydev)
 	}
 	else
 	{
-		// printk("zty rxd3 is low no autoneg!\n");
 		phydev->autoneg = AUTONEG_DISABLE;
 		autoneg = 0;
 		phydev->speed = 100;
@@ -131,7 +123,6 @@ static int bcm89883_config_init(struct phy_device *phydev)
 	}
 	else
 	{
-//		printk("zty devad 0x1 address 0x834 val 0x%x!\n", val);
 
 		if(val & 0x01)
 		{
@@ -141,13 +132,12 @@ static int bcm89883_config_init(struct phy_device *phydev)
 		{
 			speed = 100;
 		}
-	//	speed = 100;
 
 		if(speed == 100)
 		{
 			phydev->speed = 100;
 			features |= SUPPORTED_100baseT_Full;
-			// printk("zty phy speed %d!\n",speed);
+
 			linkmode_mod_bit(ETHTOOL_LINK_MODE_100baseT1_Full_BIT,
 			 phydev->supported, 1);
 
@@ -173,8 +163,6 @@ static int bcm89883_config_init(struct phy_device *phydev)
 
 	val = phy_read_mmd(phydev, 0x1, 0xa015);
 
-//    printk("zty read rgmii mode 0x%x!\n", val);
-
    	tc10_ctrl = zty_c45_read(phydev, 0x1e, 0x00f0);
 	if(tc10_ctrl < 0)
 	{
@@ -184,7 +172,6 @@ static int bcm89883_config_init(struct phy_device *phydev)
 	}
 	else
 	{
-		//printk("zty devad 0x1e address 0xf0 val 0x%x!\n", tc10_ctrl);
 		tc10_disable = tc10_ctrl & 0x8000;
 	}
 
@@ -196,7 +183,6 @@ static int bcm89883_config_init(struct phy_device *phydev)
 	}
 	else
 	{
-		//printk("zty devad 0x1 address 0x932a val 0x%x!\n", superisolate);
 		superisolate = superisolate & 0x0020;
 	}
 
@@ -217,9 +203,8 @@ static int bcm89883_config_init(struct phy_device *phydev)
 
 	zty_c45_write(phydev, 1, 0x900b, 0x0000);
 
-		if(polarity_ena_100)
+	if(polarity_ena_100)
 	{
-//		zty_c45_write(phydev, 1, 0x8b02, 0x0001);
 		zty_c45_write(phydev, 1, 0x8b02, 0xb265);
 	}
 
@@ -324,14 +309,6 @@ static int bcm89883_config_init(struct phy_device *phydev)
 			  zty_c45_write(phydev, 0x01, 0x81f6, 0x25bf);
 		}
 
-		// if(workmode)
-		// {
-		// 	if(autoneg)
-		// 	{
-		// 		zty_c45_write(phydev, 0x01, 0x8032, 0xe38c);
-		// 		zty_c45_write(phydev, 0x01, 0x8033, 0xe57f);
-		// 	}
-		// }
 
 		if(testoff_100m && autoneg)
 		{
@@ -398,39 +375,15 @@ static int bcm89883_config_init(struct phy_device *phydev)
 			if(speed == 1000)
 			{
 				zty_c45_write(phydev, 0x01, 0x834, 0x8001);
-//				zty_c45_write(phydev, 0x07, 0x0203, 0x0080);
-//				zty_c45_write(phydev, 0x07, 0x0202, 0x1001);
 			}
 			else
 				zty_c45_write(phydev, 0x01, 0x834, 0x8000);
 		}
-//		val = zty_c45_read(phydev, 0x07, 0x0200);
-//		printk("zty autoneg ieee 0x0200 0x%x!\n", val);
-//		val = zty_c45_read(phydev, 0x07, 0x0202);
-//		printk("zty autoneg ieee 0x0202 0x%x!\n", val);
-//		val = zty_c45_read(phydev, 0x07, 0x0203);
-//		printk("zty autoneg ieee 0x0203 0x%x!\n", val);
-//
-//		val = zty_c45_read(phydev, 0x01, 0x8b00);
-//		printk("zty autoneg ieee 0x8b00 0x%x!\n", val);
-//		zty_c45_write(phydev, 0x01, 0x8b00, 0x0003);
+
 
 		zty_c45_write(phydev, 0x07, 0x0200, 0x0200);
 
-		// val = zty_c45_read(phydev, 0x07, 0x0200);
-		// printk("zty autoneg ieee 0x0200 0x%x!\n", val);
-
-	//	if(speed == 1000)
-		{		
-			val = zty_c45_read(phydev, 0x01, 0xa010);
-			printk("zty  0xa010 0x%x!\n", val);
-			//zty_c45_write(phydev, 0x01, 0xa010, val|0x01);
-			 zty_c45_write(phydev, 0x01, 0xa010, 0x1101);
-			// val = zty_c45_read(phydev, 0x01, 0xa010);
-			// printk("zty  0xa010 0x%x!\n", val);
-			//zty_c45_write(phydev, 0x01, 0xa010, 0x000);
-		}
-
+		zty_c45_write(phydev, 0x01, 0xa010, 0x1101); //设置发送接收延时
 
 	}
 	else
@@ -471,15 +424,12 @@ static int bcm89883_config_init(struct phy_device *phydev)
 	if(tc10_disable == 0 || superisolate == 0)
 	{
 		val = zty_c45_read(phydev, 0x01, 0x8f02);
-		//printk("zty read 0x8f02 val 0x%x!\n", val);
 		zty_c45_write(phydev, 0x01, 0x8f02, 0x0000);
 	}
 	else
 	{
-		//zty_c45_write(phydev, 0x01, 0x932a, 0x0002);
 		printk("zty disable superisolate!\n");
 	}
-	// printk("zty phy interface %d!\n", phydev->interface);
     
 	return 0;
 }
@@ -557,17 +507,14 @@ static int bcm89883_aneg_done(struct phy_device *phydev)
 
 static int bcm89883_read_status(struct phy_device *phydev)
 {
-//	int devad, reg;
 	int val;
 	int adv;
-	// int err;
 	int lpa;
 	int lpagb = 0;
 	int common_adv;
 	int common_adv_gb = 0;
 
 	val = zty_c45_read(phydev, 1, 1);
-//	printk("zty read link state 0x%x!\n", val);
 
 	if((val >= 0) && (val &MDIO_STAT1_LSTATUS))
 	{
@@ -577,32 +524,15 @@ static int bcm89883_read_status(struct phy_device *phydev)
 	}
 	else
 	{
-		//printk("zty find link down!\n");
 		phydev->link = 0;
 	}
 
 	if (AUTONEG_ENABLE == phydev->autoneg) {
 		printk("zty find state auto neg !\n");
-		// if (phydev->supported & (SUPPORTED_1000baseT_Half
-		// 			| SUPPORTED_1000baseT_Full)) {
-		// 	lpagb = phy_read(phydev, MII_STAT1000);
-		// 	if (lpagb < 0)
-		// 		return lpagb;
-
-		// 	adv = phy_read(phydev, MII_CTRL1000);
-		// 	if (adv < 0)
-		// 		return adv;
-
-		// 	phydev->lp_advertising =
-		// 		mii_stat1000_to_ethtool_lpa_t(lpagb);
-		// 	common_adv_gb = lpagb & adv << 2;
-		// }
 
 		lpa = phy_read(phydev, MII_LPA);
 		if (lpa < 0)
 			return lpa;
-
-		// phydev->lp_advertising |= mii_lpa_to_ethtool_lpa_t(lpa);
 
 		adv = phy_read(phydev, MII_ADVERTISE);
 		if (adv < 0)
@@ -647,13 +577,11 @@ static int bcm89883_read_status(struct phy_device *phydev)
 
 		if((bmcr & (1 << 6)) && !(bmcr & (1 <<13)))
 		{
-	//		printk("zty control speed 1000!\n");
 			phydev->duplex = DUPLEX_FULL;
 			phydev->speed = SPEED_1000;
 		}
 		else if(!(bmcr & (1 << 6)) && (bmcr & (1 <<13)))
 		{
-	//		printk("zty control speed 100!\n");
 			phydev->duplex = DUPLEX_FULL;
 			phydev->speed = SPEED_100;
 		}
@@ -661,11 +589,6 @@ static int bcm89883_read_status(struct phy_device *phydev)
 		{
 			printk("zty control speed error!\n");
 		}
-
-		//bmcr = mdiobus_c45_read(phydev->bus, phydev->addr, 3, 0);
-		bmcr = zty_c45_read(phydev, 3, 0);
-		//printk("zty read 3 0 val 0x%x!\n", bmcr);
-
 
 		phydev->pause = 0;
 		phydev->asym_pause = 0;

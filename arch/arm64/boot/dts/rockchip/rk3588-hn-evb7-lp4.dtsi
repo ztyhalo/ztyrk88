@@ -9,7 +9,7 @@
 #include "rk3588-evb.dtsi"
 #include "rk3588-rk806-single.dtsi"
 
-#include "topeet_screen_lcds.dts"
+//#include "topeet_screen_lcds.dts"  //失能lcd显示
 //#include "topeet_camera_config.dtsi"
 
 / {
@@ -218,17 +218,6 @@
 		enable-active-high;
 	};
 */
-
-#if 0
-	vcc_3v3_sd_s0: vcc-3v3-sd-s0-regulator {
-		compatible = "regulator-fixed";
-		gpio = <&gpio0 RK_PB7 GPIO_ACTIVE_HIGH>;
-		pinctrl-names = "default";
-		pinctrl-0 = <&sd_s0_pwr>;
-		regulator-name = "vcc_3v3_sd_s0";
-		enable-active-high;
-	};
-#endif
 
 	vbus5v0_typec: vbus5v0-typec {
                 compatible = "regulator-fixed";
@@ -589,9 +578,7 @@
 
 &sdmmc {
 	status = "okay";
- 	//cd-gpios = <&gpio0 RK_PA1 GPIO_ACTIVE_LOW>;
     non-removable;
-	//vmmc-supply = <&vcc_3v3_sd_s0>;
 };
 
 &u2phy0_otg {

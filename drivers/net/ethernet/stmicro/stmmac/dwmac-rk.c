@@ -2366,7 +2366,10 @@ static int rk_gmac_probe(struct platform_device *pdev)
 	struct stmmac_resources stmmac_res;
 	const struct rk_gmac_ops *data;
 	int ret;
-
+	if(pdev->name)
+	{
+		printk("hndz rk_gmac_probe %s start!\n", pdev->name);
+	}
 	data = of_device_get_match_data(&pdev->dev);
 	if (!data) {
 		dev_err(&pdev->dev, "no of match data provided\n");
@@ -2410,6 +2413,11 @@ static int rk_gmac_probe(struct platform_device *pdev)
 	ret = dwmac_rk_create_loopback_sysfs(&pdev->dev);
 	if (ret)
 		goto err_gmac_powerdown;
+	
+	if(pdev->name)
+	{
+		printk("hndz rk_gmac_probe %s end!\n", pdev->name);
+	}
 
 	return 0;
 

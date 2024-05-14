@@ -294,7 +294,11 @@ static int rtl8211f_read_status(struct phy_device *phydev)
 	phydev->speed = SPEED_100;
 	phydev->duplex = DUPLEX_FULL;
 
+	
 	phydev->pause = phydev->asym_pause = 0;
+	
+	printk("hndz  support %*pb\n",  __ETHTOOL_LINK_MODE_MASK_NBITS, phydev->supported);
+	// printk("hndz read rtl8211f feature 0x%x!\n", phydev->supported);
 	return 0;
 
 }

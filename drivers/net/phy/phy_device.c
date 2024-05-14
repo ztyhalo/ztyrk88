@@ -2528,6 +2528,10 @@ int genphy_read_abilities(struct phy_device *phydev)
 {
 	int val;
 
+	printk("hndz read phy abilities!\n");
+	dump_stack();
+	if(phydev->drv && phydev->drv->name)
+		printk("hndz phy driver name %s!\n", phydev->drv->name);
 	linkmode_set_bit_array(phy_basic_ports_array,
 			       ARRAY_SIZE(phy_basic_ports_array),
 			       phydev->supported);

@@ -74,6 +74,8 @@ static int bcm89883_get_features(struct phy_device *phydev)
 	linkmode_set_bit_array(bcm89883_features_array,
 				ARRAY_SIZE(bcm89883_features_array),
 				phydev->supported);
+	printk("hndz bcm9899x get features support %*pb\n",  __ETHTOOL_LINK_MODE_MASK_NBITS, phydev->supported);
+
 	return 0;
 }
 
@@ -430,6 +432,8 @@ static int bcm89883_config_init(struct phy_device *phydev)
 	{
 		printk("zty disable superisolate!\n");
 	}
+
+	printk("hndz bcm8988x config init features support %*pb\n",  __ETHTOOL_LINK_MODE_MASK_NBITS, phydev->supported);
     
 	return 0;
 }
@@ -469,6 +473,8 @@ static int bcm89883_config_aneg(struct phy_device *phydev)
                      ret, __LINE__, __func__);
 	if (ret)
 		return ret;
+	
+	return 0;
 
 	/* We don't support manual MDI control */
 	phydev->mdix_ctrl = ETH_TP_MDI_AUTO;
@@ -564,35 +570,39 @@ static int bcm89883_read_status(struct phy_device *phydev)
 			phydev->asym_pause = lpa & LPA_PAUSE_ASYM ? 1 : 0;
 		}
 	} else {
-		//int bmcr = mdiobus_c45_read(phydev->bus, phydev->addr, 1, 0);
-		int bmcr = zty_c45_read(phydev, 1, 0);
+		// int bmcr = zty_c45_read(phydev, 1, 0);
 
-		if (bmcr < 0)
-		{
-			printk("zty read 1 0 err!\n");
-			return bmcr;
-		}
+		// if (bmcr < 0)
+		// {
+		// 	printk("zty read 1 0 err!\n");
+		// 	return bmcr;
+		// }
 
-		printk("hndz read bmcr is 0x%x!\n", bmcr);
+		// printk("hndz read bmcr is 0x%x!\n", bmcr);
 
-		if((bmcr & (1 << 6)) && !(bmcr & (1 <<13)))
-		{
-			phydev->duplex = DUPLEX_FULL;
-			phydev->speed = SPEED_1000;
-		}
-		else if(!(bmcr & (1 << 6)) && (bmcr & (1 <<13)))
-		{
-			phydev->duplex = DUPLEX_FULL;
-			phydev->speed = SPEED_100;
-		}
-		else
-		{
-			printk("zty control speed error!\n");
-		}
+		// if((bmcr & (1 << 6)) && !(bmcr & (1 <<13)))
+		// {
+		// 	phydev->duplex = DUPLEX_FULL;
+		// 	phydev->speed = SPEED_1000;
+		// }
+		// else if(!(bmcr & (1 << 6)) && (bmcr & (1 <<13)))
+		// {
+		// 	phydev->duplex = DUPLEX_FULL;
+		// 	phydev->speed = SPEED_100;
+		// }
+		// else
+		// {
+		// 	printk("zty control speed error!\n");
+		// }
+
+		phydev->speed = SPEED_100;
+		phydev->duplex = DUPLEX_FULL;
 
 		phydev->pause = 0;
 		phydev->asym_pause = 0;
 	}
+
+	printk("hndz bcm9899x support %*pb\n",  __ETHTOOL_LINK_MODE_MASK_NBITS, phydev->supported);
 
 	return 0;
 }
@@ -613,7 +623,7 @@ static struct phy_driver bcm89883_drivers[] = {
 	.phy_id		= PHY_ID_BCM89883,
 	.name		= "Broadcom BCM89883",
 	.phy_id_mask	= 0xffffffff,
-	.features       = 0,
+	// .features       = SUPPORTED_100baseT_Full | SUPPORTED_MII | SUPPORTED_Autoneg| SUPPORTED_Asym_Pause | SUPPORTED_Pause,
 //	.flags		= PHY_HAS_INTERRUPT,
 	.config_init	= bcm89883_config_init,
 	.config_aneg	= bcm89883_config_aneg,

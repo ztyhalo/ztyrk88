@@ -139,6 +139,8 @@ static int phylink_is_empty_linkmode(const unsigned long *linkmode)
 	phylink_set(tmp, Pause);
 	phylink_set(tmp, Asym_Pause);
 
+	printk("hndz linkmode support %*pb\n",  __ETHTOOL_LINK_MODE_MASK_NBITS, linkmode);
+	printk("hndz tmp support %*pb\n",  __ETHTOOL_LINK_MODE_MASK_NBITS, tmp);
 	return linkmode_subset(linkmode, tmp);
 }
 
@@ -156,7 +158,10 @@ static const char *phylink_an_mode_str(unsigned int mode)
 static int phylink_validate(struct phylink *pl, unsigned long *supported,
 			    struct phylink_link_state *state)
 {
+	printk("hndz phylink_validate support %*pb\n",  __ETHTOOL_LINK_MODE_MASK_NBITS, supported);
 	pl->mac_ops->validate(pl->config, supported, state);
+	printk("hndz phylink validate func %pS!\n", pl->mac_ops->validate);
+	dump_stack();
 
 	return phylink_is_empty_linkmode(supported) ? -EINVAL : 0;
 }

@@ -1922,7 +1922,7 @@ static int rk_gmac_clk_init(struct plat_stmmacenet_data *plat)
 	if (bsp_priv->clock_input) {
 		dev_info(dev, "clock input from PHY\n");
 	} else {
-		printk("hndz bsp_priv->phy_iface %d!\n", bsp_priv->phy_iface);
+		
 		if (bsp_priv->phy_iface == PHY_INTERFACE_MODE_RMII)
 			clk_set_rate(bsp_priv->clk_mac, 50000000);
 	}
@@ -1939,7 +1939,6 @@ static int rk_gmac_clk_init(struct plat_stmmacenet_data *plat)
 			clk_set_rate(bsp_priv->clk_phy, 50000000);
 		}
 	}
-	// printk("hndz bsp_priv->clk_phy speed is %ld!\n", clk_get_rate(bsp_priv->clk_phy));
 
 	return 0;
 }
@@ -2366,10 +2365,7 @@ static int rk_gmac_probe(struct platform_device *pdev)
 	struct stmmac_resources stmmac_res;
 	const struct rk_gmac_ops *data;
 	int ret;
-	if(pdev->name)
-	{
-		printk("hndz rk_gmac_probe %s start!\n", pdev->name);
-	}
+
 	data = of_device_get_match_data(&pdev->dev);
 	if (!data) {
 		dev_err(&pdev->dev, "no of match data provided\n");
@@ -2414,10 +2410,6 @@ static int rk_gmac_probe(struct platform_device *pdev)
 	if (ret)
 		goto err_gmac_powerdown;
 	
-	if(pdev->name)
-	{
-		printk("hndz rk_gmac_probe %s end!\n", pdev->name);
-	}
 
 	return 0;
 

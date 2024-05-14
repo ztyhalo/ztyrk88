@@ -906,12 +906,10 @@ struct phy_device *get_phy_device(struct mii_bus *bus, int addr, bool is_c45)
 	if (is_c45)
 	{
 		r = get_phy_c45_ids(bus, addr, &c45_ids);
-		printk("hndz c45 get phyid is 0x%x!\n", c45_ids.devices_in_package);
 	}
 	else
 	{
 		r = get_phy_c22_id(bus, addr, &phy_id);
-		printk("hndz get phyid is 0x%x!\n", phy_id);
 	}
 
 	if (r)
@@ -2528,10 +2526,6 @@ int genphy_read_abilities(struct phy_device *phydev)
 {
 	int val;
 
-	printk("hndz read phy abilities!\n");
-	dump_stack();
-	if(phydev->drv && phydev->drv->name)
-		printk("hndz phy driver name %s!\n", phydev->drv->name);
 	linkmode_set_bit_array(phy_basic_ports_array,
 			       ARRAY_SIZE(phy_basic_ports_array),
 			       phydev->supported);

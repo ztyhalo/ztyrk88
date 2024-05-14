@@ -183,19 +183,11 @@ static int rtl8211c_config_init(struct phy_device *phydev)
 static int rtl8211f_config_aneg(struct phy_device *phydev)
 {
 	int ret;
-	u16 val;
 
-	printk("hndz rtl8211f_config_aneg!\n");
+	return 0;
 
 
 	ret = genphy_config_aneg(phydev);
-
-	if (ret < 0)
-		return ret;
-	printk("hndz config aneg ret 0x%x!\n", ret);
-
-	val = phy_read(phydev, 0x00);
-	printk("hndz conig aneg bmcr is 0x%x!\n", val);
 
 	return 0;
 }
@@ -207,7 +199,6 @@ static int rtl8211f_config_init(struct phy_device *phydev)
 	u16 val;
 	int ret;
 
-	printk("hndz rtl8211f_config_init!\n");
 
 	phydev->autoneg = AUTONEG_DISABLE;
 	phydev->speed = 100;
@@ -217,7 +208,6 @@ static int rtl8211f_config_init(struct phy_device *phydev)
 	val = RTL8211F_ALDPS_ENABLE | RTL8211F_ALDPS_PLL_OFF | RTL8211F_ALDPS_XTAL_OFF;
 	phy_modify_paged_changed(phydev, 0xa43, RTL8211F_PHYCR1, val, val);
 
-	printk("hndz rtl8211f phydev interface is %d!\n", phydev->interface);
 	switch (phydev->interface) {
 	case PHY_INTERFACE_MODE_RGMII:
 		val_txdly = 0;
@@ -296,9 +286,7 @@ static int rtl8211f_read_status(struct phy_device *phydev)
 
 	
 	phydev->pause = phydev->asym_pause = 0;
-	
-	printk("hndz  support %*pb\n",  __ETHTOOL_LINK_MODE_MASK_NBITS, phydev->supported);
-	// printk("hndz read rtl8211f feature 0x%x!\n", phydev->supported);
+
 	return 0;
 
 }

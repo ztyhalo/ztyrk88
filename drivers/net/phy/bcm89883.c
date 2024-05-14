@@ -4,13 +4,15 @@
 
 #define PHY_ID_BCM89883 0xae02503a
 
-static const int bcm89883_features_array[6] = {
+static const int bcm89883_features_array[8] = {
+	ETHTOOL_LINK_MODE_10baseT_Half_BIT,
+	ETHTOOL_LINK_MODE_10baseT_Full_BIT,
+	ETHTOOL_LINK_MODE_100baseT_Half_BIT,
 	ETHTOOL_LINK_MODE_100baseT_Full_BIT,
+	ETHTOOL_LINK_MODE_1000baseT_Full_BIT,
+	ETHTOOL_LINK_MODE_Autoneg_BIT,
 	ETHTOOL_LINK_MODE_TP_BIT,
 	ETHTOOL_LINK_MODE_MII_BIT,
-	ETHTOOL_LINK_MODE_FIBRE_BIT,
-	ETHTOOL_LINK_MODE_AUI_BIT,
-	ETHTOOL_LINK_MODE_BNC_BIT,
 };
 
 static int bcm89883_wait_init(struct phy_device *phydev)
@@ -74,12 +76,12 @@ static int bcm89883_get_features(struct phy_device *phydev)
 	linkmode_set_bit_array(bcm89883_features_array,
 				ARRAY_SIZE(bcm89883_features_array),
 				phydev->supported);
-	printk("hndz bcm9899x get features support %*pb\n",  __ETHTOOL_LINK_MODE_MASK_NBITS, phydev->supported);
 
 	return 0;
 }
 
-static int bcm89883_config_init(struct phy_device *phydev)
+
+static int bcm89883_100M_config_init(struct phy_device *phydev)
 {
 
 	int val = 0;
@@ -99,22 +101,21 @@ static int bcm89883_config_init(struct phy_device *phydev)
 		| SUPPORTED_AUI | SUPPORTED_FIBRE |
 		SUPPORTED_BNC);
 
-	val = phy_read_mmd(phydev, MDIO_MMD_AN, 0x0200);
+	
 
-	if(val & (1 << 12))
-	{
-		phydev->autoneg = AUTONEG_ENABLE;
-		features |= SUPPORTED_Autoneg;
-		autoneg = 1;
-		
-	}
-	else
-	{
-		phydev->autoneg = AUTONEG_DISABLE;
-		autoneg = 0;
-		phydev->speed = 100;
-		phydev->duplex = DUPLEX_FULL;
+	/*强制100M 自动协商失能*/
+	phydev->autoneg = AUTONEG_DISABLE;
+	autoneg = 0;
+	phydev->speed = 100;
+	phydev->duplex = DUPLEX_FULL;
 
+	zty_c45_write(phydev, 0x01, 0x0000, 0x8040); //软复位
+
+	val = bcm89883_wait_init(phydev);
+	if(val != 0 )
+	{
+		printk("hndz bcm89883 wait reset error!\n");
+		return -1;
 	}
 
 	val = phy_read_mmd(phydev, 0x1, 0x0834);
@@ -129,27 +130,20 @@ static int bcm89883_config_init(struct phy_device *phydev)
 		if(val & 0x01)
 		{
 			speed = 1000;
+			printk("hndz read speed error!\n");
 		}
 		else
 		{
 			speed = 100;
 		}
+		speed = 100;
+		/*强制100M*/
+		phydev->speed = 100;
+		features |= SUPPORTED_100baseT_Full;
 
-		if(speed == 100)
-		{
-			phydev->speed = 100;
-			features |= SUPPORTED_100baseT_Full;
+		linkmode_mod_bit(ETHTOOL_LINK_MODE_100baseT_Full_BIT,
+			phydev->supported, 1);
 
-			linkmode_mod_bit(ETHTOOL_LINK_MODE_100baseT1_Full_BIT,
-			 phydev->supported, 1);
-
-		}
-		else
-		{
-			phydev->speed = 1000;
-			features |= SUPPORTED_1000baseT_Full;
-			printk("zty phy speed %d!\n",speed);
-		}
 
 		if(val & (1 << 14))
 		{
@@ -176,6 +170,7 @@ static int bcm89883_config_init(struct phy_device *phydev)
 	{
 		tc10_disable = tc10_ctrl & 0x8000;
 	}
+
 
 	superisolate = zty_c45_read(phydev, 1, 0x932a);
 	if(superisolate < 0)
@@ -433,12 +428,11 @@ static int bcm89883_config_init(struct phy_device *phydev)
 		printk("zty disable superisolate!\n");
 	}
 
-	printk("hndz bcm8988x config init features support %*pb\n",  __ETHTOOL_LINK_MODE_MASK_NBITS, phydev->supported);
     
 	return 0;
 }
 
-static int bcm89883_phy_probe(struct phy_device *phydev)
+int bcm89883_phy_probe(struct phy_device *phydev)
 {
 	/* This driver requires PMAPMD and AN blocks */
 	const u32 mmd_mask = MDIO_DEVS_PMAPMD | MDIO_DEVS_AN;
@@ -456,67 +450,17 @@ static int bcm89883_phy_probe(struct phy_device *phydev)
 
 static int bcm89883_config_aneg(struct phy_device *phydev)
 {
-	bool changed = false;
-	u32 adv;
-	int ret;
 
 	return 0;
-
-	/* Wait for the PHY to finish initialising, otherwise our
-	 * advertisement may be overwritten.
-	 */
-    printk(KERN_INFO "changed: %d, Line: %d, Fun: %s\n",
-                     changed, __LINE__, __func__);
-
-	ret = bcm89883_wait_init(phydev);
-    printk(KERN_INFO "ret: %d, Line: %d, Fun: %s\n",
-                     ret, __LINE__, __func__);
-	if (ret)
-		return ret;
-	
-	return 0;
-
-	/* We don't support manual MDI control */
-	phydev->mdix_ctrl = ETH_TP_MDI_AUTO;
-
-	ret = genphy_c45_an_config_aneg(phydev);
-    printk(KERN_INFO "ret: %d, Line: %d, Fun: %s\n",
-                     ret, __LINE__, __func__);
-	if (ret < 0)
-		return ret;
-	if (ret > 0)
-		changed = true;
-
-	adv = linkmode_adv_to_mii_ctrl1000_t(phydev->advertising);
-	ret = phy_modify_mmd_changed(phydev, MDIO_MMD_AN, 0x1200,
-				     ADVERTISE_1000FULL | ADVERTISE_1000HALF,
-				     adv);
-	if (ret < 0)
-		return ret;
-	if (ret > 0)
-		changed = true;
-
-	return genphy_c45_check_and_restart_aneg(phydev, changed);
 }
 
-static int bcm89883_aneg_done(struct phy_device *phydev)
-{
-	int ret;
-
-	ret = phy_read_mmd(phydev, MDIO_MMD_AN, 0x0201);
-	if (ret < 0)
-		return ret;
-    
-    return phydev->autoneg_complete;
-
-}
 
 static int bcm89883_read_status(struct phy_device *phydev)
 {
 	int val;
 	int adv;
 	int lpa;
-	int lpagb = 0;
+
 	int common_adv;
 	int common_adv_gb = 0;
 
@@ -525,7 +469,7 @@ static int bcm89883_read_status(struct phy_device *phydev)
 	if((val >= 0) && (val &MDIO_STAT1_LSTATUS))
 	{
 		if(phydev->link ==0)
-			printk("zty find link!\n");
+			printk("hndz find link!\n");
 		phydev->link = 1;
 	}
 	else
@@ -570,30 +514,6 @@ static int bcm89883_read_status(struct phy_device *phydev)
 			phydev->asym_pause = lpa & LPA_PAUSE_ASYM ? 1 : 0;
 		}
 	} else {
-		// int bmcr = zty_c45_read(phydev, 1, 0);
-
-		// if (bmcr < 0)
-		// {
-		// 	printk("zty read 1 0 err!\n");
-		// 	return bmcr;
-		// }
-
-		// printk("hndz read bmcr is 0x%x!\n", bmcr);
-
-		// if((bmcr & (1 << 6)) && !(bmcr & (1 <<13)))
-		// {
-		// 	phydev->duplex = DUPLEX_FULL;
-		// 	phydev->speed = SPEED_1000;
-		// }
-		// else if(!(bmcr & (1 << 6)) && (bmcr & (1 <<13)))
-		// {
-		// 	phydev->duplex = DUPLEX_FULL;
-		// 	phydev->speed = SPEED_100;
-		// }
-		// else
-		// {
-		// 	printk("zty control speed error!\n");
-		// }
 
 		phydev->speed = SPEED_100;
 		phydev->duplex = DUPLEX_FULL;
@@ -601,8 +521,6 @@ static int bcm89883_read_status(struct phy_device *phydev)
 		phydev->pause = 0;
 		phydev->asym_pause = 0;
 	}
-
-	printk("hndz bcm9899x support %*pb\n",  __ETHTOOL_LINK_MODE_MASK_NBITS, phydev->supported);
 
 	return 0;
 }
@@ -623,9 +541,9 @@ static struct phy_driver bcm89883_drivers[] = {
 	.phy_id		= PHY_ID_BCM89883,
 	.name		= "Broadcom BCM89883",
 	.phy_id_mask	= 0xffffffff,
-	// .features       = SUPPORTED_100baseT_Full | SUPPORTED_MII | SUPPORTED_Autoneg| SUPPORTED_Asym_Pause | SUPPORTED_Pause,
+	// .features       = PHY_GBIT_FEATURES,
 //	.flags		= PHY_HAS_INTERRUPT,
-	.config_init	= bcm89883_config_init,
+	.config_init	= bcm89883_100M_config_init,
 	.config_aneg	= bcm89883_config_aneg,
 	.get_features	= bcm89883_get_features,
 	.read_status	= bcm89883_read_status,

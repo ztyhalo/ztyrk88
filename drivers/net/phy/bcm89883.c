@@ -73,9 +73,19 @@ static int bcm89883_match_phy_device(struct phy_device *phydev)
 static int bcm89883_get_features(struct phy_device *phydev)
 {
 
+	// int ret;
+
+	// ret = genphy_c45_pma_read_abilities(phydev);
+	// if (ret)
+	// 	return ret;
 	linkmode_set_bit_array(bcm89883_features_array,
 				ARRAY_SIZE(bcm89883_features_array),
 				phydev->supported);
+	
+	linkmode_clear_bit(ETHTOOL_LINK_MODE_10baseT_Half_BIT,
+			   phydev->supported);
+	linkmode_clear_bit(ETHTOOL_LINK_MODE_10baseT_Full_BIT,
+			   phydev->supported);
 
 	return 0;
 }
@@ -521,7 +531,7 @@ static int bcm89883_read_status(struct phy_device *phydev)
 		phydev->pause = 0;
 		phydev->asym_pause = 0;
 	}
-
+	
 	return 0;
 }
 

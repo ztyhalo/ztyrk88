@@ -333,100 +333,100 @@
 };
 
 &u2phy0 {
-	status = "okay";
+	status = "disable";
 };
 
 &u2phy1 {
-	status = "okay";
+	status = "disable";
 };
 
 &u2phy2 {
-	status = "okay";
+	status = "disable";
 };
 
 &u2phy3 {
-	status = "okay";
+	status = "disable";
 };
 
 &u2phy0_otg {
-	status = "okay";
+	status = "disable";
 };
 
 &u2phy1_otg {
-	status = "okay";
+	status = "disable";
 };
 
 &u2phy2_host {
-	status = "okay";
+	status = "disable";
 };
 
 &u2phy3_host {
-	status = "okay";
+	status = "disable";
 };
 
 &usb_host0_ehci {
-	status = "okay";
+	status = "disable";
 };
 
 &usb_host0_ohci {
-	status = "okay";
+	status = "disable";
 };
 
 &usb_host1_ehci {
-	status = "okay";
+	status = "disable";
 };
 
 &usb_host1_ohci {
-	status = "okay";
+	status = "disable";
 };
 
 &usbdp_phy0 {
-	status = "okay";
+	status = "disable";
 };
 
 &usbdp_phy0_dp {
-	status = "okay";
+	status = "disable";
 };
 
 &usbdp_phy0_u3 {
-	status = "okay";
+	status = "disable";
 };
 
 &usbdp_phy1 {
-	status = "okay";
+	status = "disable";
 };
 
 &usbdp_phy1_dp {
-	status = "okay";
+	status = "disable";
 };
 
 &usbdp_phy1_u3 {
-	status = "okay";
+	status = "disable";
 };
 
 &usbdrd3_0 {
-	status = "okay";
+	status = "disable";
 };
 
 &usbdrd_dwc3_0 {
 	dr_mode = "otg";
-	status = "okay";
+	status = "disable";
 };
 
 &usbhost3_0 {
-	status = "okay";
+	status = "disable";
 };
 
 &usbhost_dwc3_0 {
-	status = "okay";
+	status = "disable";
 };
 
 &usbdrd3_1 {
-	status = "okay";
+	status = "disable";
 };
 
 &usbdrd_dwc3_1 {
-	status = "okay";
+	status = "disable";
 };
 
 &vdpu {

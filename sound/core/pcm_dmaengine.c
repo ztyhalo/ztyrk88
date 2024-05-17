@@ -133,8 +133,16 @@ EXPORT_SYMBOL_GPL(snd_dmaengine_pcm_set_config_from_dai_data);
 
 static void dmaengine_pcm_dma_complete(void *arg)
 {
-	struct snd_pcm_substream *substream = arg;
+	struct snd_pcm_substream *substream = NULL;
 	struct dmaengine_pcm_runtime_data *prtd;
+
+	if(arg != NULL)
+		substream = arg;
+	else
+	{
+		printk("hndz pcm_dma_complete arg is null!\n");
+		return;
+	}
 
 	snd_pcm_stream_lock_irq(substream);
 	if (PCM_RUNTIME_CHECK(substream)) {

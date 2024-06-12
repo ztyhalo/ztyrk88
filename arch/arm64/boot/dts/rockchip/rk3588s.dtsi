@@ -2357,7 +2357,7 @@
 		reg = <0x0 0xfd8b0010 0x0 0x10>;
 		#pwm-cells = <3>;
 		pinctrl-names = "active";
-		pinctrl-0 = <&pwm1m0_pins>;
+		pinctrl-0 = <&pwm1m1_pins>;
 		clocks = <&cru CLK_PMU1PWM>, <&cru PCLK_PMU1PWM>;
 		clock-names = "pwm", "pclk";
 		status = "disabled";

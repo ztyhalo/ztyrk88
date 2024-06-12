@@ -9,7 +9,7 @@
 #include "rk3588-evb.dtsi"
 #include "rk3588-rk806-single.dtsi"
 
-//#include "topeet_screen_lcds.dts"  //失能lcd显示
+#include "topeet_screen_lcds.dts"  //失能lcd显示
 //#include "topeet_camera_config.dtsi"
 
 / {
@@ -563,7 +563,7 @@
 };
 
 &pwm1 {
-	status = "disable"; //失能pwm1，于can0引脚冲突
+	status = "okay"; //失能pwm1，于can0引脚冲突
 };
 
 &pwm3 {

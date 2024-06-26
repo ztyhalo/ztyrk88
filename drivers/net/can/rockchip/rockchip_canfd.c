@@ -188,6 +188,10 @@ enum {
 #define TX_FD_BRS_ENABLE	BIT(4)
 
 #define FIFO_ENABLE		BIT(0)
+#define RX_FIFO_CNT0_SHIFT	4
+#define RX_FIFO_CNT0_MASK	(0x7 << RX_FIFO_CNT0_SHIFT)
+#define RX_FIFO_CNT1_SHIFT	5
+#define RX_FIFO_CNT1_MASK	(0x7 << RX_FIFO_CNT1_SHIFT)
 
 #define FORMAT_SHIFT		7
 #define FORMAT_MASK		(0x1 << FORMAT_SHIFT)
@@ -666,12 +670,21 @@ static irqreturn_t rockchip_canfd_interrupt(int irq, void *dev_id)
 	struct net_device *ndev = (struct net_device *)dev_id;
 	struct rockchip_canfd *rcan = netdev_priv(ndev);
 	struct net_device_stats *stats = &ndev->stats;
-	u8 err_int = ERR_WARN_INT | RX_BUF_OV_INT | PASSIVE_ERR_INT |
-		     TX_LOSTARB_INT | BUS_ERR_INT;
-	u8 isr;
+	u32 test_int = ERR_WARN_INT | RX_BUF_OV_INT | PASSIVE_ERR_INT |
+		     TX_LOSTARB_INT | BUS_ERR_INT | TX_FINISH_INT | RX_FINISH_INT;
+	u32 err_int = ERR_WARN_INT | RX_BUF_OV_INT | PASSIVE_ERR_INT |
+			BUS_ERR_INT | BUS_OFF_INT;
+	u32 isr;
 	u32 dlc = 0;
+	u32 quota, work_done = 0;
 
 	isr = rockchip_canfd_read(rcan, CAN_INT);
+
+	if(!(isr & test_int))
+	{
+		printk("hndz can irq 0x%x!\n", isr);
+	}
+
 	if (isr & TX_FINISH_INT) {
 		dlc = rockchip_canfd_read(rcan, CAN_TXFIC);
 		/* transmission complete interrupt */
@@ -687,7 +700,21 @@ static irqreturn_t rockchip_canfd_interrupt(int irq, void *dev_id)
 	}
 
 	if (isr & RX_FINISH_INT)
-		rockchip_canfd_rx(ndev);
+	{
+			work_done = 0;
+			quota = (rockchip_canfd_read(rcan, CAN_RXFC) &
+				 RX_FIFO_CNT1_MASK) >>
+				RX_FIFO_CNT1_SHIFT;
+			if(quota)
+			{
+				// if(quota > 1)
+				// {
+				// 	printk("hndz can rev cnt %d!\n", quota);
+				// }
+				while(work_done < quota)
+					work_done +=rockchip_canfd_rx(ndev);
+			}
+	}
 
 	if (isr & err_int) {
 		/* error interrupt */
@@ -893,6 +920,7 @@ static int rockchip_canfd_probe(struct platform_device *pdev)
 	rcan = netdev_priv(ndev);
 
 	/* register interrupt handler */
+	printk("hndz canfd irq is %d!\n", irq);
 	err = devm_request_irq(&pdev->dev, irq, rockchip_canfd_interrupt,
 			       0, ndev->name, ndev);
 	if (err) {

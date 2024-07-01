@@ -533,10 +533,7 @@ re_probe:
 	dev->driver = drv;
 
 	/* If using pinctrl, bind pins now before probing */
-		printk("hndz bus: '%s': %s: probing driver %s with device %s\n",
-		 drv->bus->name, __func__, drv->name, dev_name(dev));
-	if(strcmp(dev_name(dev), "fea50000.can") == 0)
-		dump_stack();
+
 	ret = pinctrl_bind_pins(dev);
 	if (ret)
 		goto pinctrl_bind_failed;

@@ -110,7 +110,7 @@
 };
 
 &can1 {
-	status = "disable";
+	status = "okay";
 	compatible = "rockchip,canfd-1.0"; //使用canfd
 	pinctrl-0 = <&can1m1_pins>;
 	assigned-clocks = <&cru CLK_CAN1>;
@@ -118,7 +118,7 @@
 };
 
 &can2 {
-	status = "disable";
+	status = "okay";
 	compatible = "rockchip,canfd-1.0"; //使用canfd
 	pinctrl-0 = <&can2m0_pins>;
 	assigned-clocks = <&cru CLK_CAN2>;
@@ -127,7 +127,7 @@
 
 //485
 &uart0 {
-	status = "disable";
+	status = "okay";
 //	dma-names = "tx", "rx"; //使用dma传输模式
 	pinctrl-names = "default";
 	pinctrl-0 = <&uart0m2_xfer>;

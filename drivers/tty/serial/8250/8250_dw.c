@@ -448,7 +448,7 @@ static void dw8250_quirks(struct uart_port *p, struct dw8250_data *data)
 		id = of_alias_get_id(np, "serial");
 		if (id >= 0)
 			p->line = id;
-
+		// printk("hndz dw8250 get id is %d!\n", id);
 		if (IS_ENABLED(CONFIG_ROCKCHIP_MINI_KERNEL))
 			return;
 

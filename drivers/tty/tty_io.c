@@ -3230,7 +3230,11 @@ struct device *tty_register_device_attr(struct tty_driver *driver,
 	dev_set_drvdata(dev, drvdata);
 
 	dev_set_uevent_suppress(dev, 1);
-
+	// printk("hndz tty dev name %s index %d driver->name base %d!\n", dev_name(dev), index, driver->name_base);
+	// if(strcmp(dev_name(dev), "ttymxc7") == 0)
+	// {
+	// 	dump_stack();
+	// }
 	retval = device_register(dev);
 	if (retval)
 		goto err_put;

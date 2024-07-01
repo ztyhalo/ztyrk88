@@ -2587,6 +2587,7 @@ int uart_register_driver(struct uart_driver *drv)
 		goto out_kfree;
 
 	drv->tty_driver = normal;
+	// printk("hndz uart register driver name %s dev name %s!\n",  drv->driver_name, drv->dev_name);
 
 	normal->driver_name	= drv->driver_name;
 	normal->name		= drv->dev_name;

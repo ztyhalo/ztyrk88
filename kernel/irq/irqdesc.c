@@ -669,6 +669,9 @@ int __handle_domain_irq(struct irq_domain *domain, unsigned int hwirq,
 	unsigned int irq = hwirq;
 	struct irq_desc *desc;
 	int ret = 0;
+	u64 cur_time1, cur_time2;
+
+	cur_time1 = arch_timer_read_counter();
 
 #ifdef CONFIG_IRQ_DOMAIN
 	if (lookup)
@@ -696,6 +699,14 @@ int __handle_domain_irq(struct irq_domain *domain, unsigned int hwirq,
 
 out:
 	set_irq_regs(old_regs);
+
+	cur_time2 = arch_timer_read_counter();
+	if((cur_time2 - cur_time1) >= 192000)
+	{
+		printk("hndz irq over id %d irq %d!\n", hwirq, irq);
+	}
+	// if(irq == 82)
+	// 	printk("hndz can irq end!\n");
 	return ret;
 }
 

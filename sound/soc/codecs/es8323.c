@@ -467,6 +467,10 @@ static int es8323_set_dai_fmt(struct snd_soc_dai *codec_dai, unsigned int fmt)
 	u8 adciface = 0;
 	u8 daciface = 0;
 
+
+	printk("hndz es8323_set_dai_fmt!\n");
+
+
 	iface = snd_soc_component_read(component, ES8323_IFACE);
 	adciface = snd_soc_component_read(component, ES8323_ADC_IFACE);
 	daciface = snd_soc_component_read(component, ES8323_DAC_IFACE);
@@ -530,6 +534,7 @@ static int es8323_set_dai_fmt(struct snd_soc_dai *codec_dai, unsigned int fmt)
 	snd_soc_component_write(component, ES8323_IFACE, iface);
 	snd_soc_component_write(component, ES8323_ADC_IFACE, adciface);
 	snd_soc_component_write(component, ES8323_DAC_IFACE, daciface);
+
 
 	return 0;
 }
@@ -628,6 +633,8 @@ static int es8323_set_bias_level(struct snd_soc_component *component,
 	switch (level) {
 	case SND_SOC_BIAS_ON:
 		dev_dbg(component->dev, "%s on\n", __func__);
+		// snd_soc_component_write(component, ES8323_ADCPOWER, 0x00); //修改adcpower为00
+
 		break;
 	case SND_SOC_BIAS_PREPARE:
 		dev_dbg(component->dev, "%s prepare\n", __func__);
@@ -640,6 +647,7 @@ static int es8323_set_bias_level(struct snd_soc_component *component,
 			if (ret)
 				return ret;
 		}
+
 		snd_soc_component_write(component, ES8323_ANAVOLMANAG, 0x7C);
 		snd_soc_component_write(component, ES8323_CHIPLOPOW1, 0x00);
 		snd_soc_component_write(component, ES8323_CHIPLOPOW2, 0x00);
@@ -648,6 +656,7 @@ static int es8323_set_bias_level(struct snd_soc_component *component,
 		break;
 	case SND_SOC_BIAS_STANDBY:
 		dev_dbg(component->dev, "%s standby\n", __func__);
+	
 		snd_soc_component_write(component, ES8323_ANAVOLMANAG, 0x7C);
 		snd_soc_component_write(component, ES8323_CHIPLOPOW1, 0x00);
 		snd_soc_component_write(component, ES8323_CHIPLOPOW2, 0x00);
@@ -656,6 +665,7 @@ static int es8323_set_bias_level(struct snd_soc_component *component,
 		break;
 	case SND_SOC_BIAS_OFF:
 		dev_dbg(component->dev, "%s off\n", __func__);
+
 		snd_soc_component_write(component, ES8323_ADCPOWER, 0xFF);
 		snd_soc_component_write(component, ES8323_DACPOWER, 0xC0);
 		snd_soc_component_write(component, ES8323_CHIPLOPOW1, 0xFF);
@@ -770,9 +780,9 @@ static int es8323_probe(struct snd_soc_component *component)
 	snd_soc_component_write(component, 0x06, 0xC3);
 	snd_soc_component_write(component, 0x19, 0x02);
 	snd_soc_component_write(component, 0x09, 0x00);
-	snd_soc_component_write(component, 0x0A, 0x00);
+	snd_soc_component_write(component, 0x0A, 0x0C); //修改dssel和dsr为差分信号使用
 	snd_soc_component_write(component, 0x0B, 0x02);
-	snd_soc_component_write(component, 0x0C, 0x4C);
+	snd_soc_component_write(component, 0x0C, 0x0C); //修改数据来源00 – left data = left ADC, right data = right ADC
 	snd_soc_component_write(component, 0x0D, 0x02);
 	snd_soc_component_write(component, 0x10, 0x00);
 	snd_soc_component_write(component, 0x11, 0x00);

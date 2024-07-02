@@ -217,7 +217,7 @@ static void adc_jack_handler(struct work_struct *work)
 						  handler);
 	struct snd_soc_jack *jack_headset = mc_data->jack_headset;
 	int adc, ret = 0;
-
+	printk("hndz hp det gpio value 0x%x!\n", gpiod_get_value(mc_data->hp_det_gpio));
 	if (!gpiod_get_value(mc_data->hp_det_gpio)) {
 		snd_soc_jack_report(jack_headset, 0, SND_JACK_HEADSET);
 		extcon_set_state_sync(mc_data->extcon,
@@ -239,17 +239,22 @@ static void adc_jack_handler(struct work_struct *work)
 	ret = iio_read_channel_processed(mc_data->adc, &adc);
 	if (ret < 0) {
 		/* failed to read ADC, so assume headphone */
+		printk("hndz read channel processed no adc!\n");
 		snd_soc_jack_report(jack_headset, SND_JACK_HEADPHONE, SND_JACK_HEADSET);
 		extcon_set_state_sync(mc_data->extcon, EXTCON_JACK_HEADPHONE, true);
 		extcon_set_state_sync(mc_data->extcon, EXTCON_JACK_MICROPHONE, false);
 
 	} else {
-		snd_soc_jack_report(jack_headset,
-				    snd_soc_jack_get_type(jack_headset, adc),
-				    SND_JACK_HEADSET);
+		printk("hndz read adc ok type is 0x%x!\n", snd_soc_jack_get_type(jack_headset, adc));
+		// snd_soc_jack_report(jack_headset,
+		// 		    snd_soc_jack_get_type(jack_headset, adc),
+		// 		    SND_JACK_HEADSET);
+		snd_soc_jack_report(jack_headset, SND_JACK_HEADSET, SND_JACK_HEADSET);			
 		extcon_set_state_sync(mc_data->extcon, EXTCON_JACK_HEADPHONE, true);
+		extcon_set_state_sync(mc_data->extcon, EXTCON_JACK_MICROPHONE, true);
 
 		if (snd_soc_jack_get_type(jack_headset, adc) == SND_JACK_HEADSET) {
+			printk("hndz miphone start!\n");
 			extcon_set_state_sync(mc_data->extcon, EXTCON_JACK_MICROPHONE, true);
 			if (mc_data->poller)
 				mc_keys_poller_start(mc_data->poller);
@@ -402,6 +407,8 @@ static int rk_dailink_init(struct snd_soc_pcm_runtime *rtd)
 		dev_info(card->dev, "Don't need to map headset detect gpio to irq\n");
 		return 0;
 	}
+	printk("hndz rk_dailink_init start!\n");
+	dump_stack();
 
 	jack_headset = devm_kzalloc(card->dev, sizeof(*jack_headset), GFP_KERNEL);
 	if (!jack_headset)
@@ -433,6 +440,7 @@ static int rk_dailink_init(struct snd_soc_pcm_runtime *rtd)
 		struct snd_soc_component *component = asoc_rtd_to_codec(rtd, 0)->component;
 
 		snd_soc_component_set_jack(component, jack_headset, NULL);
+		printk("hndz snd soc componnet set jack!\n");
 	} else {
 		irq = gpiod_to_irq(mc_data->hp_det_gpio);
 		if (irq >= 0) {
@@ -447,7 +455,7 @@ static int rk_dailink_init(struct snd_soc_pcm_runtime *rtd)
 				dev_err(card->dev, "Failed to request headset detect irq");
 				return ret;
 			}
-
+			printk("hndz gpiod request irq hp det!\n");
 			queue_delayed_work(system_power_efficient_wq,
 					   &mc_data->handler, msecs_to_jiffies(50));
 		}
@@ -685,6 +693,8 @@ static int rk_multicodecs_probe(struct platform_device *pdev)
 
 	mc_data->codec_hp_det =
 		of_property_read_bool(np, "rockchip,codec-hp-det");
+	printk("hndz mc_data->codec_hp_det is %d!\n", mc_data->codec_hp_det);
+	mc_data->codec_hp_det = true;
 
 	mc_data->adc = devm_iio_channel_get(&pdev->dev, "adc-detect");
 
@@ -713,7 +723,7 @@ static int rk_multicodecs_probe(struct platform_device *pdev)
 			dev_err(&pdev->dev, "failed to allocate input device\n");
 			return PTR_ERR(input);
 		}
-
+		printk("hndz regedit audio keydev!\n");
 		input_set_drvdata(input, mc_data);
 
 		input->name = "headset-keys";
@@ -754,16 +764,20 @@ static int rk_multicodecs_probe(struct platform_device *pdev)
 							GPIOD_OUT_LOW);
 	if (IS_ERR(mc_data->spk_ctl_gpio))
 		return PTR_ERR(mc_data->spk_ctl_gpio);
-
+	printk("hndz spk gpio end!\n");
 	mc_data->hp_ctl_gpio = devm_gpiod_get_optional(&pdev->dev,
 						       "hp-con",
 						       GPIOD_OUT_LOW);
 	if (IS_ERR(mc_data->hp_ctl_gpio))
 		return PTR_ERR(mc_data->hp_ctl_gpio);
 
+	printk("hndz hp ctl gpio end!\n");
+
 	mc_data->hp_det_gpio = devm_gpiod_get_optional(&pdev->dev, "hp-det", GPIOD_IN);
 	if (IS_ERR(mc_data->hp_det_gpio))
 		return PTR_ERR(mc_data->hp_det_gpio);
+
+	printk("hndz hp det gpio end!\n");
 
 	mc_data->extcon = devm_extcon_dev_allocate(&pdev->dev, headset_extcon_cable);
 	if (IS_ERR(mc_data->extcon)) {

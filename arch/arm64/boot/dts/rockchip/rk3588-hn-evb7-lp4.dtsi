@@ -40,7 +40,7 @@
 		spk-con-gpio = <&gpio3 RK_PB2 GPIO_ACTIVE_HIGH>;
 		//hp-con-gpio = <&gpio3 RK_PB2 GPIO_ACTIVE_HIGH>;
 		rockchip,format = "i2s";
-		rockchip,mclk-fs = <256>;
+		rockchip,mclk-fs = <512>;
 		rockchip,cpu = <&i2s0_8ch>;
 		rockchip,codec = <&es8388>;
 		rockchip,audio-routing =

@@ -128,28 +128,28 @@
 //485
 &uart0 {
 	status = "okay";
-//	dma-names = "tx", "rx"; //使用dma传输模式
+	dma-names = "tx", "rx"; //使用dma传输模式
 	pinctrl-names = "default";
 	pinctrl-0 = <&uart0m2_xfer>;
 };
 
 &uart7 {
 	status = "okay";
-//	dma-names = "tx", "rx"; //使用dma传输模式
+	dma-names = "tx", "rx"; //使用dma传输模式
 	pinctrl-names = "default";
 	pinctrl-0 = <&uart7m1_xfer>;
 };
 
 &uart8 {
 	status = "okay";
-//	dma-names = "tx", "rx"; //使用dma传输模式
+	dma-names = "tx", "rx"; //使用dma传输模式
 	pinctrl-names = "default";
 	pinctrl-0 = <&uart8m0_xfer>;
 };
 
 &uart9 {
 	status = "okay";
-//	dma-names = "tx", "rx"; //使用dma传输模式
+	dma-names = "tx", "rx"; //使用dma传输模式
 	pinctrl-names = "default";
 	pinctrl-0 = <&uart9m1_xfer>;
 };

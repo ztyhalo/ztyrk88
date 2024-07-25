@@ -163,6 +163,8 @@ err:
 
 #if defined(CONFIG_ARCH_ROCKCHIP) && defined(CONFIG_NO_GKI)
 
+static int debugUart = 0;
+
 int serial8250_rx_dma(struct uart_8250_port *p)
 {
 	unsigned int rfl, i = 0, fcr = 0, cur_index = 0;
@@ -180,11 +182,21 @@ int serial8250_rx_dma(struct uart_8250_port *p)
 		cur_index = dma->rx_size - state.residue;
 	} while (cur_index % dma->rxconf.src_maxburst);
 
+
+
 	rfl = serial_port_in(port, UART_RFL_16550A);
 	while (i < rfl)
 		buf[i++] = serial_port_in(port, UART_RX);
 
 	__dma_rx_complete(p);
+
+	if(debugUart == 0)
+	{
+		if(p->port.name != NULL)
+			printk("hndz uart port is %s!\n", p->port.name);
+		printk("hndz receive num is %d!\n", i);
+		debugUart++;
+	}
 
 	tty_insert_flip_string(tty_port, buf, i);
 	p->port.icount.rx += i;

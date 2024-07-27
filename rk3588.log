@@ -1,0 +1,431 @@
+[    3.049520] hndz bus: 'platform': really_probe: probing driver clock-link with device fd7c08ec.hclk_vo1
+[    3.061488] hndz bus: 'platform': really_probe: probing driver clock-link with device fd7c08b0.aclk_vdpu_low_pre
+[    3.073982] hndz bus: 'platform': really_probe: probing driver clock-link with device fd7c08dc.hclk_vo0
+[    3.085513] hndz bus: 'platform': really_probe: probing driver clock-link with device fd7c08a8.hclk_usb
+[    3.096906] hndz bus: 'platform': really_probe: probing driver clock-link with device fd7c087c.hclk_nvm
+[    3.108131] hndz bus: 'platform': really_probe: probing driver clock-link with device fd7c08a8.aclk_usb
+[    3.119276] hndz bus: 'platform': really_probe: probing driver clock-link with device fd7c0868.hclk_isp1_pre
+[    3.130832] hndz bus: 'platform': really_probe: probing driver clock-link with device fd7c0868.aclk_isp1_pre
+[    3.142303] hndz bus: 'platform': really_probe: probing driver clock-link with device fd7c08a0.aclk_rkvdec0_pre
+[    3.154073] hndz bus: 'platform': really_probe: probing driver clock-link with device fd7c08a0.hclk_rkvdec0_pre
+[    3.165693] hndz bus: 'platform': really_probe: probing driver clock-link with device fd7c08a4.aclk_rkvdec1_pre
+[    3.177345] hndz bus: 'platform': really_probe: probing driver clock-link with device fd7c08a4.hclk_rkvdec1_pre
+[    3.188961] hndz bus: 'platform': really_probe: probing driver clock-link with device fd7c08b0.aclk_jpeg_decoder_pre
+[    3.201020] hndz bus: 'platform': really_probe: probing driver clock-link with device fd7c08c0.aclk_rkvenc1_pre
+[    3.212478] hndz bus: 'platform': really_probe: probing driver clock-link with device fd7c08c0.hclk_rkvenc1_pre
+[    3.223979] hndz bus: 'platform': really_probe: probing driver clock-link with device fd7c08dc.aclk_hdcp0_pre
+[    3.235193] hndz bus: 'platform': really_probe: probing driver clock-link with device fd7c08ec.aclk_hdcp1_pre
+[    3.246469] hndz bus: 'platform': really_probe: probing driver clock-link with device fd7c0910.pclk_av1_pre
+[    3.257437] hndz bus: 'platform': really_probe: probing driver clock-link with device fd7c0910.aclk_av1_pre
+[    3.268384] hndz bus: 'platform': really_probe: probing driver clock-link with device fd7c092c.hclk_sdio_pre
+[    3.279477] hndz bus: 'platform': really_probe: probing driver clock-link with device fd7c08dc.pclk_vo0_grf
+[    3.290432] hndz bus: 'platform': really_probe: probing driver clock-link with device fd7c08ec.pclk_vo1_grf
+[    3.302019] hndz bus: 'platform': really_probe: probing driver sram with device 10f000.sram
+[    3.313111] hndz bus: 'platform': really_probe: probing driver rockchip-pm-domain with device fd8d8000.power-management:power-controller
+[    3.338095] hndz bus: 'platform': really_probe: probing driver sram with device ff001000.sram
+[    3.348079] hndz bus: 'platform': really_probe: probing driver rockchip-pinctrl with device pinctrl
+[    3.359197] hndz bus: 'platform': really_probe: probing driver rockchip-gpio with device fd8a0000.gpio
+    5.924504] hndz bus: 'platform': really_probe: probing driver rockchip_canfd with device fea50000.can
+[    5.924524] CPU: 2 PID: 194 Comm: kworker/u16:2 Not tainted 5.10.110 #98
+[    5.924534] Hardware name: Rockchip RK3588 EVB7 LP4 V10 Board (DT)
+[    5.924554] Workqueue: events_unbound deferred_probe_work_func
+[    5.924568] Call trace:
+[    5.924581]  dump_backtrace+0x0/0x1b4
+[    5.924591]  show_stack+0x24/0x30
+[    5.924604]  dump_stack_lvl+0xc8/0xf8
+[    5.924617]  dump_stack+0x18/0x34
+[    5.924630]  really_probe+0x1dc/0x4b8
+[    5.924643]  driver_probe_device+0x138/0x148
+[    5.924655]  __device_attach_driver+0xd8/0x114
+[    5.924666]  bus_for_each_drv+0xa4/0xcc
+[    5.924677]  __device_attach+0xdc/0x170
+[    5.924689]  device_initial_probe+0x20/0x2c
+[    5.924700]  bus_probe_device+0x3c/0xa0
+[    5.924712]  deferred_probe_work_func+0xe0/0xf4
+[    5.924725]  process_one_work+0x1e0/0x298
+[    5.924738]  process_scheduled_works+0x4c/0x50
+[    5.924751]  worker_thread+0x1f8/0x27c
+[    5.924763]  kthread+0xf8/0x108
+[    5.924776]  ret_from_fork+0x10/0x30
+[    5.924947] rockchip-pinctrl pinctrl: pin gpio0-16 already requested by fd8b0010.pwm; cannot claim for fea50000.can
+[    5.924977] rockchip-pinctrl pinctrl: pin-16 (fea50000.can) status -22
+[    5.924999] rockchip-pinctrl pinctrl: could not request pin 16 (gpio0-16) from group can0m0-pins  on device rockchip-pinctrl
+[    5.925018] rockchip_canfd fea50000.can: Error applying setting, reverse things back
+[    5.925056] rockchip_canfd: probe of fea50000.can failed with error -22
+
+
+
+	/* If using pinctrl, bind pins now before probing */
+		printk("hndz bus: '%s': %s: probing driver %s with device %s\n",
+		 drv->bus->name, __func__, drv->name, dev_name(dev));
+	if(strcmp(dev_name(dev), "fea50000.can") == 0)
+		dump_stack();
+	ret = pinctrl_bind_pins(dev);
+
+arch_timer: cp15 timer(s) running at 24.00MHz (phys).
+
+
+
+  4.483825] hndz tty dev name ttymxc7!
+[    4.483832] CPU: 4 PID: 1 Comm: swapper/0 Not tainted 5.10.110 #103
+[    4.483836] Hardware name: Rockchip RK3588 EVB7 LP4 V10 Board (DT)
+[    4.483841] Call trace:
+[    4.483851]  dump_backtrace+0x0/0x1b4
+[    4.483857]  show_stack+0x24/0x30
+[    4.483864]  dump_stack_lvl+0xc8/0xf8
+[    4.483869]  dump_stack+0x18/0x34
+[    4.483878]  tty_register_device_attr+0x17c/0x23c
+[    4.483884]  tty_port_register_device_attr+0x54/0x6c
+[    4.483891]  uart_add_one_port+0x3ac/0x444
+[    4.483898]  serial8250_register_8250_port+0x31c/0x410
+[    4.483904]  dw8250_probe+0x560/0x61c
+[    4.483911]  platform_drv_probe+0x60/0xb0
+[    4.483916]  really_probe+0x2dc/0x46c
+[    4.483922]  driver_probe_device+0x138/0x148
+[    4.483927]  device_driver_attach+0x50/0x7c
+[    4.483932]  __driver_attach+0x150/0x154
+[    4.483937]  bus_for_each_dev+0x7c/0xc8
+[    4.483942]  driver_attach+0x30/0x3c
+[    4.483947]  bus_add_driver+0x1b4/0x1fc
+[    4.483953]  driver_register+0xc0/0xf8
+[    4.483959]  __platform_driver_register+0x58/0x64
+[    4.483966]  dw8250_platform_driver_init+0x28/0x34
+[    4.483972]  do_one_initcall+0xa0/0x1e8
+[    4.483978]  kernel_init_freeable+0x2a4/0x2ac
+[    4.483985]  kernel_init+0x20/0x11c
+[    4.483991]  ret_from_fork+0x10/0x30
+
+rk3588
+rockchip-pinctrl pinctrl: pin gpio0-16 already requested by fd8b0010.pwm; cannot claim for fea50000.can
+[    5.924977] rockchip-pinctrl pinctrl: pin-16 (fea50000.can) status -22
+[    5.924999] rockchip-pinctrl pinctrl: could not request pin 16 (gpio0-16) from group can0m0-pins  on device rockchip-pinctrl
+[    5.925018] rockchip_canfd fea50000.can: Error applying setting, reverse things back
+[    5.925056] rockchip_canfd: probe of fea50000.can failed with error -22
+
+amixer cset numid=32,iface=MIXER,name='Left PGA Mux' 1
+
+echo "8" > /proc/sys/kernel/printk
+arecord -d 10 /tmp/linshi.wav
+aplay /opt/voice/platform/pidai_baohu.wav
+
+dd if=/opt/boot.img of=/dev/mmcblk0p3 bs=512
+
+
+systemctl disable xrdp
+systemctl stop xrdp
+apt purge xrdp
+apt purge xserver-xorg-core
+apt install xrdp
+apt install xserver-xorg-core
+grep 'ssl-cert' /etc/group
+adduser xrdp ssl-cert
+grep 'ssl-cert' /etc/group
+
+
+
+音频
+amixer controls
+amixer contents
+Headphone
+
+amixer cget name='Speaker Switch'
+amixer cset name='Speaker Switch' 1 打开
+
+amixer cget name='Headphone Switch'
+amixer cset name='Headphone Switch' 1 打开
+
+amixer cget name='Left PGA Mux'  
+  ; Item #0 'Line 1L'
+  ; Item #1 'Line 2L'
+  ; Item #2 'DifferentialL'
+amixer cset name='Left PGA Mux' 2 差分模式
+
+amixer cget name='Right PGA Mux'
+amixer cset name='Right PGA Mux' 2
+
+alsactl store -f /var/lib/alsa/asound.state
+
+amixer cget name='Headphone Jack'
+amixer cget numid=26,iface=CARD,name='Headphone Jack
+
+amixer cset name='Headphone Jack' 1
+
+mc_data->codec_hp_det = true;
+
+[ 1188.612331] ES8323 7-0011: Unable to configure sample rate 22050Hz with 5644800Hz MCLK
+[ 1188.612380] ES8323 7-0011: ASoC: error at snd_soc_dai_hw_params on ES8323.7-0011: -22
+/opt/version/S88rc5logic236
+
+imx6dlsabresd login: [  222.666684] hndz  configure sample rate 44100Hz with 24000000Hz MCLK!
+[  222.673181] CPU: 1 PID: 594 Comm: aplay Not tainted 3.14.28-dirty #40
+[  222.679947] [<800149f8>] (unwind_backtrace) from [<80011714>] (show_stack+0x10/0x14)
+[  222.687736] [<80011714>] (show_stack) from [<805673d4>] (dump_stack+0x7c/0xbc)
+[  222.695022] [<805673d4>] (dump_stack) from [<8048fcfc>] (aic3x_hw_params+0x78/0x500)
+[  222.702807] [<8048fcfc>] (aic3x_hw_params) from [<8048aec0>] (soc_pcm_hw_params+0x13c/0x42c)
+[  222.711301] [<8048aec0>] (soc_pcm_hw_params) from [<80473444>] (snd_pcm_hw_params+0xb4/0x384)
+[  222.719865] [<80473444>] (snd_pcm_hw_params) from [<80475254>] (snd_pcm_common_ioctl1+0x5c4/0xdb8)
+[  222.728865] [<80475254>] (snd_pcm_common_ioctl1) from [<80475bd8>] (snd_pcm_playback_ioctl1+0x190/0x45c)
+[  222.738661] [<80475bd8>] (snd_pcm_playback_ioctl1) from [<800e4d98>] (do_vfs_ioctl+0x3dc/0x59c)
+[  222.747396] [<800e4d98>] (do_vfs_ioctl) from [<800e4f8c>] (SyS_ioctl+0x34/0x5c)
+[  222.754746] [<800e4f8c>] (SyS_ioctl) from [<8000e4a0>] (ret_fast_syscall+0x0/0x30)
+
+安装qt
+apt-get install qt4-default
+apt-get install qt4*
+gedit /etc/pam.d/gdm-autologin 第三行
+#auth    required    pam_succeed_if.so user != root quiet_success屏蔽
+gedit /etc/pam.d/gdm-password第三行
+#auth    required    pam_succeed_if.so user != root quiet_success
+gedit /root/.profile
+tty -s&&mesg n 2> /dev/null || true 未改
+
+libmosquittopp.so.1 cannot open
+/opt/bin/VoipServer
+rsync -l 保留软连接
+
+安装candump
+ apt-get install can-utils 
+ 
+ git命令
+ git stash
+ git stash save 'audio linshi change'
+ 、git stash pop [–index] [stash_id] 
+ git stash pop
+ 
+ 
+export CROSS_COMPILE=/home/leno/rk3588/buildroot/rk3588-linux_20240424/rk3588-linux/prebuilts/gcc/linux-x86/aarch64/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-
+make ARCH=arm64 rockchip_linux_defconfig rk3588_linux.config
+
+make ARCH=arm64 rk3588-evb7-lp4-v10-linux.img -j8
+
+打包文件系统
+拷贝库文件到local目录下
+/home/leno/rk3588/216/locallib$ sudo cp -r * /home/z/zty/rk3588/ubuntu/ubuntu18/ubuntu-rootfs/usr/local/
+sudo cp -r * /home/z/zty/rk3588/ubuntu/ubuntu18/ubuntu-rootfs/usr/local/
+拷贝规则文件 interface 启动脚本rc.local
+sudo cp hndz.rules /home/z/zty/rk3588/ubuntu/ubuntu18/ubuntu-rootfs/etc/udev/rules.d/
+sudo cp interfaces /home/z/zty/rk3588/ubuntu/ubuntu18/ubuntu-rootfs/etc/network/
+
+vi ~/.bashrc
+# 添加一行
+alias code='/usr/share/code/code . --no-sandbox --unity-launch'
+# 报存生效
+source ~/.bashrc
+
+sudo cp libasound.so.2.0.0 /usr/lib/aarch64-linux-gnu/libasound.so.2.0.0
+./configure --prefix=/media/root/395e8fd6-bc2e-436b-8ad3-4d01c44953a5/alsabuild
+make
+make install
+sudo cp libasound.so.2.0.0 /usr/lib/aarch64-linux-gnu/libasound.so.2.0.0
+A9
+amixer cget name='Line Playback Switch'
+static long snd_ctl_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+SNDRV_CTL_IOCTL_ELEM_WRITE
+
+rk3588音频
+Created symlink /home/user/.config/systemd/user/pulseaudio.service → /dev/null.
+
+apt-get remove pulseaudio
+
+音频设置过程
+snd_ctl_ioctl 测试是调用SNDRV_CTL_IOCTL_ELEM_WRITE snd_ctl_elem_write设置switch开关函数为__snd_soc_dapm_set_pin
+
+./configure --prefix=/media/root/395e8fd6-bc2e-436b-8ad3-4d01c44953a51/utilsbuild
+
+
+hn3588 login: [   52.144606] hndz set pcm startup!
+[   52.146250] hndz dai set sysclk 11289600!
+[   52.146276] CPU: 1 PID: 1374 Comm: gnome-shell Not tainted 5.10.110 #123
+[   52.146284] Hardware name: Rockchip RK3588 EVB7 LP4 V10 Board (DT)
+[   52.146294] Call trace:
+[   52.146315]  dump_backtrace+0x0/0x1b4
+[   52.146325]  show_stack+0x24/0x30
+[   52.146339]  dump_stack_lvl+0xc8/0xf8
+[   52.146347]  dump_stack+0x18/0x34
+[   52.146360]  es8323_set_dai_sysclk+0x40/0xbc
+[   52.146372]  snd_soc_dai_set_sysclk+0x44/0x80
+[   52.146385]  rk_multicodecs_hw_params+0x64/0xdc
+[   52.146394]  snd_soc_link_hw_params+0x38/0x68
+[   52.146403]  soc_pcm_hw_params+0x114/0x468
+[   52.146415]  snd_pcm_hw_params+0x2e8/0x34c
+[   52.146424]  snd_pcm_common_ioctl+0x588/0xea0
+[   52.146432]  snd_pcm_ioctl+0x38/0x50
+[   52.146443]  vfs_ioctl+0x34/0x54
+[   52.146450]  __arm64_sys_ioctl+0x6c/0xa0
+[   52.146462]  el0_svc_common.constprop.0+0x13c/0x1ec
+[   52.146470]  do_el0_svc+0x8c/0x98
+[   52.146478]  el0_svc+0x20/0x30
+[   52.146486]  el0_sync_handler+0xd8/0x184
+[   52.146498]  el0_sync+0x1a0/0x1c0
+
+SNDRV_PCM_IOCTL_HW_PARAMS
+
+[   75.539148] hndz es8323_pcm_hw_params!
+[   75.539167] CPU: 0 PID: 1406 Comm: gnome-shell Not tainted 5.10.110 #124
+[   75.539174] Hardware name: Rockchip RK3588 EVB7 LP4 V10 Board (DT)
+[   75.539182] Call trace:
+[   75.539195]  dump_backtrace+0x0/0x1b4
+[   75.539204]  show_stack+0x24/0x30
+[   75.539215]  dump_stack_lvl+0xc8/0xf8
+[   75.539222]  dump_stack+0x18/0x34
+[   75.539233]  es8323_pcm_hw_params+0x80/0x244
+[   75.539242]  snd_soc_dai_hw_params+0x64/0x90
+[   75.539250]  soc_pcm_hw_params+0x2c8/0x468
+[   75.539260]  snd_pcm_hw_params+0x2e8/0x34c
+[   75.539268]  snd_pcm_common_ioctl+0x588/0xea0
+[   75.539275]  snd_pcm_ioctl+0x38/0x50
+[   75.539283]  vfs_ioctl+0x34/0x54
+[   75.539291]  __arm64_sys_ioctl+0x6c/0xa0
+[   75.539300]  el0_svc_common.constprop.0+0x13c/0x1ec
+[   75.539308]  do_el0_svc+0x8c/0x98
+[   75.539317]  el0_svc+0x20/0x30
+[   75.539325]  el0_sync_handler+0xd8/0x184
+[   75.539332]  el0_sync+0x1a0/0x1c0
+
+中断超时错误
+hndz irq over id 237 irq 58!
+自动补齐
+. /etc/bash_completion
+. / ( 点号 空格 / )#
+有空格的点号等同于source命令,表示在当前shell环境执行后面的命令或脚本（不加点号默认是新开一个shell执行的
+
+例如 . /home/test.sh 等同于 source /home/test.sh。
+
+强制卸载
+umount -f
+格式化ext4
+mkfs.ext4 -E nodiscard
+
+discard/nodiscard
+   Controls whether ext4 should issue discard/TRIM commands to the underlying block device 
+   when blocks  are  freed.This  is  useful  for  SSD  devices  and  sparse/thinly
+   -provisioned LUNs, but it is off by default until sufficient testing has been done.
+discard 块设备自动回收设备
+
+opt/bin/DBServer: error while loading shared libraries: liblog4cplus-2.0.so.3: cannot open shared object file: No such file or directory
+
+
+
+sudo mount -t nfs -o nolock,addr=172.1.10.199 172.1.10.199:/d/nfs /home/z/mnt/
+
+ModuleNotFoundError: No module named 'apt_pkg'
+apt install python3-pip 
+apt remove python3-apt
+apt install python3-apt
+
+
+拷贝static下的文件夹到更新版里
+
+Par logicfile permission syscomm
+
+
+ssh-keygen -f "/home/z/.ssh/known_hosts" -R "169.254.1.218"
+
+串口波特率
+stty -F /dev/ -a
+
+Linux内核参数之arp_ignore和arp_announce
+ net.ipv4.conf.all.arp_ignore=1
+ net.ipv4.conf.lo.arp_ignore=1
+ net.ipv4.conf.all.arp_announce=2
+ net.ipv4.conf.lo.arp_announce=2
+
+ echo "1">/proc/sys/net/ipv4/conf/all/arp_ignore
+ echo "1">/proc/sys/net/ipv4/conf/lo/arp_ignore
+ echo "2">/proc/sys/net/ipv4/conf/all/arp_announce
+ echo "2">/proc/sys/net/ipv4/conf/lo/arp_announce
+
+./ch-mount.sh -m ubuntu-rootfs/
+./ch-mount.sh -u ubuntu-rootfs/
+./mkimage.sh ubuntu-rootfs rootfs.img
+
+
+串口调试
+[   17.931320] of_dma_request_slave_channel: dma-names property of node '/serial@febb0000' missing or empty
+[   17.931350] dw-apb-uart febb0000.serial: failed to request DMA, use interrupt mode
+[   17.931427] of_dma_request_slave_channel: dma-names property of node '/serial@feba0000' missing or empty
+[   17.931449] dw-apb-uart feba0000.serial: failed to request DMA, use interrupt mode
+[   17.931736] of_dma_request_slave_channel: dma-names property of node '/serial@febc0000' missing or empty
+[   17.931767] dw-apb-uart febc0000.serial: failed to request DMA, use interrupt mode
+[   17.932059] of_dma_request_slave_channel: dma-names property of node '/serial@fd890000' missing or empty
+[   17.932074] dw-apb-uart fd890000.serial: failed to request DMA, use interrupt mode
+a9有个AGTIM 
+
+
+  245.614004] dw-apb-uart febb0000.serial: got rx and tx dma channels
+[  248.760828] dw-apb-uart fd890000.serial: got rx and tx dma channels
+[  248.761331] dw-apb-uart feba0000.serial: got rx and tx dma channels
+[  250.775963] rockchip_canfd fea50000.can can0: rockchip_canfd_get_berr_counter RX_ERR_CNT=0x00000000, TX_ERR_CNT=0x00000000
+[  250.776074] rockchip_canfd fea60000.can can1: rockchip_canfd_get_berr_counter RX_ERR_CNT=0x00000000, TX_ERR_CNT=0x00000000
+[  250.776102] rockchip_canfd fea70000.can can2: rockchip_canfd_get_berr_counter RX_ERR_CNT=0x00000000, TX_ERR_CNT=0x00000000
+[  266.107636] rockchip_canfd fea50000.can can0: rockchip_canfd_get_berr_counter RX_ERR_CNT=0x00000000, TX_ERR_CNT=0x00000000
+[  266.107764] rockchip_canfd fea60000.can can1: rockchip_canfd_get_berr_counter RX_ERR_CNT=0x00000000, TX_ERR_CNT=0x00000000
+[  266.107806] rockchip_canfd fea70000.can can2: rockchip_canfd_get_berr_counter RX_ERR_CNT=0x00000000, TX_ERR_CNT=0x00000000
+[  266.110037] rockchip_canfd fea50000.can can0: rockchip_canfd_get_berr_counter RX_ERR_CNT=0x00000000, TX_ERR_CNT=0x00000000
+[  266.110112] rockchip_canfd fea60000.can can1: rockchip_canfd_get_berr_counter RX_ERR_CNT=0x00000000, TX_ERR_CNT=0x00000000
+[  266.110147] rockchip_canfd fea70000.can can2: rockchip_canfd_get_berr_counter RX_ERR_CNT=0x00000000, TX_ERR_CNT=0x00000000
+[  308.136018] rockchip_canfd fea50000.can can0: rockchip_canfd_get_berr_counter RX_ERR_CNT=0x00000000, TX_ERR_CNT=0x00000000
+[  308.136069] rockchip_canfd fea60000.can can1: rockchip_canfd_get_berr_counter RX_ERR_CNT=0x00000000, TX_ERR_CNT=0x00000000
+[  308.136085] rockchip_canfd fea70000.can can2: rockchip_canfd_get_berr_counter RX_ERR_CNT=0x00000000, TX_ERR_CNT=0x00000000
+[  568.161947] dw-apb-uart febb0000.serial: got rx and tx dma channels
+[  571.266701] dw-apb-uart feba0000.serial: got rx and tx dma channels
+[  571.267127] dw-apb-uart fd890000.serial: got rx and tx dma channels
+[  573.299018] rockchip_canfd fea50000.can can0: rockchip_canfd_get_berr_counter RX_ERR_CNT=0x00000000, TX_ERR_CNT=0x00000000
+[  573.299126] rockchip_canfd fea60000.can can1: rockchip_canfd_get_berr_counter RX_ERR_CNT=0x00000000, TX_ERR_CNT=0x00000000
+[  573.299158] rockchip_canfd fea70000.can can2: rockchip_canfd_get_berr_counter RX_ERR_CNT=0x00000000, TX_ERR_CNT=0x00000000
+[  588.823135] rockchip_canfd fea50000.can can0: rockchip_canfd_get_berr_counter RX_ERR_CNT=0x00000000, TX_ERR_CNT=0x00000000
+[  588.823303] rockchip_canfd fea60000.can can1: rockchip_canfd_get_berr_counter RX_ERR_CNT=0x00000000, TX_ERR_CNT=0x00000000
+[  588.823358] rockchip_canfd fea70000.can can2: rockchip_canfd_get_berr_counter RX_ERR_CNT=0x00000000, TX_ERR_CNT=0x00000000
+[  588.826492] rockchip_canfd fea50000.can can0: rockchip_canfd_get_berr_counter RX_ERR_CNT=0x00000000, TX_ERR_CNT=0x00000000
+[  588.826591] rockchip_canfd fea60000.can can1: rockchip_canfd_get_berr_counter RX_ERR_CNT=0x00000000, TX_ERR_CNT=0x00000000
+[  588.826637] rockchip_canfd fea70000.can can2: rockchip_canfd_get_berr_counter RX_ERR_CNT=0x00000000, TX_ERR_CNT=0x00000000
+[ 1167.667486] rockchip-vop2 fdd90000.vop: [drm:vop2_crtc_atomic_disable] Crtc atomic disable vp3
+[ 1167.684375] rockchip-pm-domain fd8d8000.power-management:power-controller: Looking up vop-supply from device tree
+[ 1167.684484] rockchip-pm-domain fd8d8000.power-management:power-controller: Looking up vop-supply property in node /power-management@fd8d8000/power-controller failed
+
+
+[  553.409273] rc.local[936]: (EE)
+[  553.410313] rc.local[936]: Fatal server error:
+[  553.412474] rc.local[936]: (EE) AddScreen/ScreenInit failed for driver 0
+[  553.418365] rc.local[936]: (EE)
+[  553.421630] rc.local[936]: (EE)
+[  553.424547] rc.local[936]: Please consult the The X.Org Foundation support
+[  553.431402] rc.local[936]:    at http://wiki.x.org
+[  553.436065] rc.local[936]:  for help.
+[  553.440625] rc.local[936]: (EE) Please also check the log file at "/var/log/Xorg.0.log" for additional information.
+[  553.450886] rc.local[936]: (EE)
+[  553.453151] rc.local[936]: (EE) Server terminated with error (1). Closing log file.
+
+
+/opt/bin/ModbusMaster 87654354 87654355 87654356 87654357 87654331 5 87654358 Modbus_RTU_Master_2.xml
+/opt/ModbusMaster 87654354 87654355 87654356 87654357 87654331 5 87654358 Modbus_RTU_Master_2.xml
+
+] hndz irq action sdhci_irq+0x0/0xb14!
+
+[    5.477716] hndz sdhci irq is 58 !
+[    5.477732] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 5.10.110 #148
+[    5.477739] Hardware name: Rockchip RK3588 EVB7 LP4 V10 Board (DT)
+[    5.477748] Call trace:
+[    5.477763]  dump_backtrace+0x0/0x1b4
+[    5.477772]  show_stack+0x24/0x30
+[    5.477784]  dump_stack_lvl+0xc8/0xf8
+[    5.477793]  dump_stack+0x18/0x34
+[    5.477805]  sdhci_irq+0xbc/0xbe8
+[    5.477816]  __handle_irq_event_percpu+0xdc/0x214
+[    5.477825]  handle_irq_event_percpu+0x3c/0x94
+[    5.477834]  handle_irq_event+0x54/0x98
+[    5.477844]  handle_fasteoi_irq+0xb0/0x130
+[    5.477853]  generic_handle_irq_desc+0x14/0x20
+[    5.477862]  __handle_domain_irq+0x160/0x168
+[    5.477871]  gic_handle_irq+0x2bc/0x30c
+[    5.477879]  el1_irq+0xcc/0x180
+[    5.477890]  arch_local_irq_enable+0xc/0x28
+[    5.477900]  cpuidle_enter+0x44/0x5c
+[    5.477910]  do_idle+0x23c/0x260
+[    5.477919]  cpu_startup_entry+0x30/0x48
+[    5.477929]  rest_init+0xd4/0xe8
+[    5.477940]  arch_call_rest_init+0x1c/0x28
+[    5.477949]  start_kernel+0x590/0x5c8
+[    5.477970] hndz 58 irq func is handle_fasteoi_irq+0x0/0x130!
+
+

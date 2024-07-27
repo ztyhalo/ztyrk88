@@ -194,9 +194,15 @@ int serial8250_rx_dma(struct uart_8250_port *p)
 	{
 		if(p->port.name != NULL)
 			printk("hndz uart port is %s!\n", p->port.name);
-		printk("hndz receive num is %d!\n", i);
+		dump_stack();
 		debugUart++;
 	}
+	printk("hndz receive %d num is %d!\n", MAX_FIFO_SIZE, i);
+
+	
+	printk("%d %d %d %d %d %d %d %d %d!\n",buf[0], buf[1],buf[2], buf[3],buf[4], buf[5],buf[6], buf[7], buf[28]);
+	
+
 
 	tty_insert_flip_string(tty_port, buf, i);
 	p->port.icount.rx += i;

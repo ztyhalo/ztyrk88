@@ -2708,13 +2708,21 @@ static void dw_mci_handle_cd(struct dw_mci *host)
 	mmc_detect_change(slot->mmc,
 		msecs_to_jiffies(host->pdata->detect_delay_ms));
 }
-
+static int dwstate = 0;
 static irqreturn_t dw_mci_interrupt(int irq, void *dev_id)
 {
 	struct dw_mci *host = dev_id;
 	u32 pending;
 	struct dw_mci_slot *slot = host->slot;
 	unsigned long irqflags;
+	u64 cur_time1, cur_time2;
+
+	if(dwstate == 0)
+	{
+		printk("hndz dw mci irq val %d dmaval %d!\n", irq ,host->use_dma);
+		dwstate = 1;
+	}
+	cur_time1 = arch_timer_read_counter();
 
 	pending = mci_readl(host, MINTSTS); /* read-only mask reg */
 
@@ -2818,7 +2826,15 @@ rv1106_sd:
 	}
 
 	if (host->use_dma != TRANS_MODE_IDMAC)
+	{
+			cur_time2 = arch_timer_read_counter();
+			if((cur_time2 - cur_time1) >= 192000)
+			{
+				printk("hndz no TRANS_MODE_IDMAC irq %d val %lld!\n", irq, cur_time2 - cur_time1);
+			}
+		
 		return IRQ_HANDLED;
+	}
 
 	/* Handle IDMA interrupts */
 	if (host->dma_64bit_address == 1) {
@@ -2843,7 +2859,11 @@ rv1106_sd:
 				goto rv1106_sd;
 		}
 	}
-
+	cur_time2 = arch_timer_read_counter();
+	if((cur_time2 - cur_time1) >= 192000)
+	{
+		printk("hndz dw end irq %d val %lld!\n", irq, cur_time2 - cur_time1);
+	}
 	return IRQ_HANDLED;
 }
 

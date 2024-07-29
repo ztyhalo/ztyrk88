@@ -662,7 +662,6 @@ EXPORT_SYMBOL_GPL(generic_handle_irq);
  *
  * Returns:	0 on success, or -EINVAL if conversion has failed
  */
-static int irqdeb = 0;
 int __handle_domain_irq(struct irq_domain *domain, unsigned int hwirq,
 			bool lookup, struct pt_regs *regs)
 {
@@ -671,7 +670,6 @@ int __handle_domain_irq(struct irq_domain *domain, unsigned int hwirq,
 	struct irq_desc *desc;
 	int ret = 0;
 	u64 cur_time1, cur_time2;
-	u64 proce_time1, proce_time2;
 
 	cur_time1 = arch_timer_read_counter();
 
@@ -692,16 +690,11 @@ int __handle_domain_irq(struct irq_domain *domain, unsigned int hwirq,
 
 	if (IS_ENABLED(CONFIG_ARCH_WANTS_IRQ_RAW) &&
 	    unlikely(irq_settings_is_raw(desc))) {
-		proce_time1 = arch_timer_read_counter();
 		generic_handle_irq_desc(desc);
-		proce_time2 = arch_timer_read_counter();
 	} else {
-		
 		irq_enter();
 		generic_handle_irq_desc(desc);
-		proce_time1 = arch_timer_read_counter();
 		irq_exit();
-		proce_time2 = arch_timer_read_counter();
 	}
 
 out:
@@ -710,14 +703,10 @@ out:
 	cur_time2 = arch_timer_read_counter();
 	if((cur_time2 - cur_time1) >= 192000)
 	{
-		printk("hndz irq over id %d irq %d val %lld!\n", hwirq, irq, cur_time2 - cur_time1);
-		printk("hndz 58 irq func is %lld!\n", proce_time2 - proce_time1);
+		printk("hndz irq over id %d irq %d!\n", hwirq, irq);
 	}
-	if((irq == 58) && (irqdeb == 0)) 
-	{
-		printk("hndz 58 irq func is %pS!\n", desc->handle_irq);
-		irqdeb = 1;
-	}
+	// if(irq == 82)
+	// 	printk("hndz can irq end!\n");
 	return ret;
 }
 

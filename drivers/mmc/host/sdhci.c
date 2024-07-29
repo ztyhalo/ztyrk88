@@ -3423,7 +3423,7 @@ static inline bool sdhci_defer_done(struct sdhci_host *host,
 	       ((host->flags & SDHCI_REQ_USE_DMA) && data &&
 		data->host_cookie == COOKIE_MAPPED);
 }
-static int sdhcidebug = 0;
+
 static irqreturn_t sdhci_irq(int irq, void *dev_id)
 {
 	struct mmc_request *mrqs_done[SDHCI_MAX_MRQS] = {0};
@@ -3432,32 +3432,14 @@ static irqreturn_t sdhci_irq(int irq, void *dev_id)
 	u32 intmask, mask, unexpected = 0;
 	int max_loops = 16;
 	int i;
-	u64 cur_time1, cur_time2, cur_time3;
-
-	cur_time1 = arch_timer_read_counter();
 
 	spin_lock(&host->lock);
 
 	if (host->runtime_suspended) {
 		spin_unlock(&host->lock);
-
-		cur_time3 = arch_timer_read_counter();
-		if((cur_time3 - cur_time1) >= 192000)
-		{
-			printk("hndz sdhci runtime_suspended  irq %d val  %lld!\n", irq, cur_time3 - cur_time1);
-			// printk("hndz host->ops->irq %pS!\n", host->ops->irq);
-		}
-
 		return IRQ_NONE;
 	}
-	if(sdhcidebug == 0)
-	{
-		printk("hndz sdhci irq is %d !\n", irq);
-		dump_stack();
-		if(host->ops->irq)
-			printk("hndz sdhci irq is %d func %pS!\n", irq, host->ops->irq);
-		sdhcidebug++;
-	}
+
 	intmask = sdhci_readl(host, SDHCI_INT_STATUS);
 	if (!intmask || intmask == 0xffffffff) {
 		result = IRQ_NONE;
@@ -3543,8 +3525,6 @@ cont:
 		intmask = sdhci_readl(host, SDHCI_INT_STATUS);
 	} while (intmask && --max_loops);
 
-	cur_time2 = arch_timer_read_counter();
-
 	/* Determine if mrqs can be completed immediately */
 	for (i = 0; i < SDHCI_MAX_MRQS; i++) {
 		struct mmc_request *mrq = host->mrqs_done[i];
@@ -3581,12 +3561,7 @@ out:
 			   mmc_hostname(host->mmc), unexpected);
 		sdhci_dumpregs(host);
 	}
-	cur_time3 = arch_timer_read_counter();
-	if((cur_time3 - cur_time1) >= 192000)
-	{
-		printk("hndz sdhci over  irq %d val %lld %lld!\n", irq,cur_time2-cur_time1, cur_time3 - cur_time1);
-		// printk("hndz host->ops->irq %pS!\n", host->ops->irq);
-	}
+
 	return result;
 }
 

@@ -139,10 +139,6 @@ irqreturn_t __handle_irq_event_percpu(struct irq_desc *desc, unsigned int *flags
 	irqreturn_t retval = IRQ_NONE;
 	unsigned int irq = desc->irq_data.irq;
 	struct irqaction *action;
-	u64 cur_time1, cur_time2;
-	u64 proce_time1, proce_time2;
-
-	cur_time1 = arch_timer_read_counter();
 
 	record_irq_time(desc);
 
@@ -163,7 +159,7 @@ irqreturn_t __handle_irq_event_percpu(struct irq_desc *desc, unsigned int *flags
 		if (WARN_ONCE(!irqs_disabled(),"irq %u handler %pS enabled interrupts\n",
 			      irq, action->handler))
 			local_irq_disable();
-		proce_time1 = arch_timer_read_counter();
+
 		switch (res) {
 		case IRQ_WAKE_THREAD:
 			/*
@@ -185,14 +181,8 @@ irqreturn_t __handle_irq_event_percpu(struct irq_desc *desc, unsigned int *flags
 		default:
 			break;
 		}
-		proce_time2 = arch_timer_read_counter();
+
 		retval |= res;
-	}
-	cur_time2 = arch_timer_read_counter();
-	if((cur_time2 - cur_time1) >= 192000)
-	{
-		printk("hndz handle irq over  irq %d val %lld!\n", irq, cur_time2 - cur_time1);
-		printk("hndz hndle irq func is %lld!\n", proce_time2 - proce_time1);
 	}
 
 	return retval;

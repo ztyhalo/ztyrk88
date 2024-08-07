@@ -407,8 +407,8 @@ static int rk_dailink_init(struct snd_soc_pcm_runtime *rtd)
 		dev_info(card->dev, "Don't need to map headset detect gpio to irq\n");
 		return 0;
 	}
-	printk("hndz rk_dailink_init start!\n");
-	dump_stack();
+	// printk("hndz rk_dailink_init start!\n");
+	// dump_stack();
 
 	jack_headset = devm_kzalloc(card->dev, sizeof(*jack_headset), GFP_KERNEL);
 	if (!jack_headset)

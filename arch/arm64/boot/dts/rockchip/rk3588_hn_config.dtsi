@@ -103,7 +103,7 @@
 //can
 &can0 {
 	status = "okay";
-	compatible = "rockchip,canfd-1.0"; //使用canfd
+	compatible = "rockchip,can-2.0"; //使用canfd
 	pinctrl-0 = <&can0m0_pins>;
 	assigned-clocks = <&cru CLK_CAN0>;
 	assigned-clock-rates = <100000000>;
@@ -111,7 +111,7 @@
 
 &can1 {
 	status = "okay";
-	compatible = "rockchip,canfd-1.0"; //使用canfd
+	compatible = "rockchip,can-2.0"; //使用canfd
 	pinctrl-0 = <&can1m1_pins>;
 	assigned-clocks = <&cru CLK_CAN1>;
 	assigned-clock-rates = <100000000>;
@@ -119,7 +119,7 @@
 
 &can2 {
 	status = "okay";
-	compatible = "rockchip,canfd-1.0"; //使用canfd
+	compatible = "rockchip,can-2.0"; //使用canfd
 	pinctrl-0 = <&can2m0_pins>;
 	assigned-clocks = <&cru CLK_CAN2>;
 	assigned-clock-rates = <100000000>;

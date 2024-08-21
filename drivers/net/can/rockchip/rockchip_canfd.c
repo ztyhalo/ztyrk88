@@ -120,6 +120,7 @@ enum {
 #define MODE_FDOE		BIT(15)
 #define MODE_BRSD		BIT(13)
 #define MODE_SPACE_RX		BIT(12)
+#define MODE_AUTO_BUS    BIT(11)
 #define MODE_AUTO_RETX		BIT(10)
 #define MODE_RXSORT		BIT(7)
 #define MODE_TXORDER		BIT(6)
@@ -308,6 +309,7 @@ static int rockchip_canfd_set_bittiming(struct net_device *ndev)
 	reg_btp = (brp << NBTP_NBRP_SHIFT) | (sjw << NBTP_NSJW_SHIFT) |
 		  (tseg1 << NBTP_NTSEG1_SHIFT) |
 		  (tseg2 << NBTP_NTSEG2_SHIFT);
+	printk("hndz brp %d sjw %d tseg1 %d tseg2 %d!\n", brp, sjw, tseg1, tseg2);
 
 	if (rcan->can.ctrlmode & CAN_CTRLMODE_3_SAMPLES)
 		reg_btp |= NBTP_MODE_3_SAMPLES;
@@ -606,7 +608,7 @@ static int rockchip_canfd_rx(struct net_device *ndev)
 	return 1;
 }
 
-static int rockchip_canfd_err(struct net_device *ndev, u8 isr)
+static int rockchip_canfd_err(struct net_device *ndev, u32 isr)
 {
 	struct rockchip_canfd *rcan = netdev_priv(ndev);
 	struct net_device_stats *stats = &ndev->stats;
@@ -614,12 +616,15 @@ static int rockchip_canfd_err(struct net_device *ndev, u8 isr)
 	struct sk_buff *skb;
 	unsigned int rxerr, txerr;
 	u32 sta_reg;
+	u32 err_reg;
 
 	skb = alloc_can_err_skb(ndev, &cf);
 
 	rxerr = rockchip_canfd_read(rcan, CAN_RX_ERR_CNT);
 	txerr = rockchip_canfd_read(rcan, CAN_TX_ERR_CNT);
 	sta_reg = rockchip_canfd_read(rcan, CAN_STATE);
+	err_reg = rockchip_canfd_read(rcan, CAN_ERR_CODE);
+	printk("hndz canfd error status 0x%x sta_reg 0x%x irs 0x%x!\n", err_reg, sta_reg, isr);
 
 	if (skb) {
 		cf->data[6] = txerr;
@@ -684,7 +689,6 @@ static irqreturn_t rockchip_canfd_interrupt(int irq, void *dev_id)
 	{
 		printk("hndz can irq 0x%x!\n", isr);
 	}
-
 	if (isr & TX_FINISH_INT) {
 		dlc = rockchip_canfd_read(rcan, CAN_TXFIC);
 		/* transmission complete interrupt */
@@ -942,6 +946,7 @@ static int rockchip_canfd_probe(struct platform_device *pdev)
 
 	rcan->base = addr;
 	rcan->can.clock.freq = clk_get_rate(rcan->clks[0].clk);
+	printk("hndz rcan clock freq %d!\n", rcan->can.clock.freq);
 	rcan->dev = &pdev->dev;
 	rcan->can.state = CAN_STATE_STOPPED;
 	switch (rcan->mode) {

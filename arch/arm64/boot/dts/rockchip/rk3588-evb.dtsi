@@ -333,7 +333,7 @@
 };
 
 &u2phy0 {
-	status = "disable";
+	status = "okay";
 };
 
 &u2phy1 {
@@ -349,7 +349,7 @@
 };
 
 &u2phy0_otg {
-	status = "disable";
+	status = "okay";
 };
 
 &u2phy1_otg {
@@ -381,15 +381,15 @@
 };
 
 &usbdp_phy0 {
-	status = "disable";
+	status = "okay";
 };
 
 &usbdp_phy0_dp {
-	status = "disable";
+	status = "okay";
 };
 
 &usbdp_phy0_u3 {
-	status = "disable";
+	status = "okay";
 };
 
 &usbdp_phy1 {
@@ -405,12 +405,12 @@
 };
 
 &usbdrd3_0 {
-	status = "disable";
+	status = "okay";
 };
 
 &usbdrd_dwc3_0 {
 	dr_mode = "otg";
-	status = "disable";
+	status = "okay";
 };
 
 &usbhost3_0 {

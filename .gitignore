@@ -100,6 +100,7 @@ modules.order
 !.gitignore
 !.mailmap
 !.config
+!boot.img
 
 #
 # Generated include files

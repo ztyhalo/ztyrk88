@@ -1,4 +1,4 @@
-//#define LCD_TYPE_MIPI0  //VP2
+#define LCD_TYPE_MIPI0  //VP2
 //#define LCD_TYPE_LVDS_10_1_1280x800_GT911  //VP2
 //#define LCD_TYPE_LVDS_10_1_1280x800_GT9271 //VP2
 //#define LCD_TYPE_LVDS_10_1_1024x600_GT911  //VP2
@@ -6,7 +6,7 @@
 //#define LCD_TYPE_HDMI1  //VP1
 //#define LCD_TYPE_HDMI0  //VP0
 //#define LCD_TYPE_TYPEC_DP  //VP1
-#define LCD_TYPE_MIPI1    //VP3
+//#define LCD_TYPE_MIPI1    //VP3
 
 / {
 backlight: backlight {
@@ -52,11 +52,11 @@ backlight: backlight {
 
 &backlight {
         pwms = <&pwm1 0 25000 0>;
-        status = "okay";
+        status = "disable";
 };
 
 &pwm1 {
-        status = "okay";
+        status = "disable";
 };
 
 &route_dsi0 {
@@ -92,7 +92,7 @@ backlight: backlight {
                 compatible = "simple-panel-dsi";
                 power-supply = <&vcc3v3_lcd_n>;
                 reg = <0>;
-                backlight = <&backlight>;
+                //backlight = <&backlight>;
                 reset-delay-ms = <10>;
                 enable-delay-ms = <35>;
                 prepare-delay-ms = <6>;
@@ -105,82 +105,63 @@ backlight: backlight {
 		dsi,channel = <0>;
 		size,width = <120>;
 	        size,height = <170>;
+
                 panel-init-sequence = [
-			29 00 03 E0 AB BA
-			29 00 03 E1 BA AB
-			15 00 02 B0 00
-			29 00 05 B1 10 01 47 FF
-			29 00 07 B2 0C 0E 04 14 14 14
-			29 00 04 B3 56 D3 00
-			29 00 04 B4 22 30 04
-			15 00 02 B5 00
-			29 00 08 B6 B0 00 00 10 00 10 00
-			29 00 09 B7 0E 00 FF 08 08 FF FF 00
-			29 00 08 B8 05 12 29 49 48 00 00
-			29 00 27 B9 4D 42 38 31 33 27 2F 1B 36 35 35 53 41 49 3D 3D 33 29 26 4C 42 39 31 33 27 2F 1B 36 35 35 53 41 49 3D 3D 33 29 26
-			29 00 09 BA 00 00 00 44 24 00 00 00
-			29 00 04 BB 76 00 00
-			29 00 03 BC 00 00
-			29 00 06 BD FF 00 00 00 00
-			15 00 02 BE 00
-			29 00 11 C0 98 76 12 34 33 33 44 44 06 04 8A 04 0F 00 00 00
-			29 00 0B C1 53 94 02 85 06 04 8A 04 54 00
-			29 00 0D C2 37 09 08 89 08 10 22 21 44 BB 18 00
-			29 00 17 C3 9C 1D 1E 1F 10 12 0C 0E 05 24 24 24 24 24 24 07 24 24 24 24 24 24
-			29 00 17 C4 1C 1D 1E 1F 11 13 0D 0F 04 24 24 24 24 24 24 06 24 24 24 24 24 24
-			29 00 04 C5 E8 85 76
-			29 00 03 C6 20 20
-			29 00 17 C7 41 01 0D 11 09 15 19 4F 10 D7 CF 19 1B 1D 03 02 25 30 00 03 FF 00
-			29 00 07 C8 61 00 31 42 54 16
-			29 00 06 C9 A1 22 FF Cd 23
-			29 00 03 CA 4B 43
-			29 00 05 CC 2E 02 04 08
-			29 00 09 CD 0E 64 64 20 1E 6B 06 83
-			29 00 04 D0 27 10 80
-			29 00 05 D1 00 0D FF 0F
-			29 00 05 D2 E3 2B 38 00
-			29 00 0C D4 00 01 00 0E 04 44 08 10 00 07 00
-			15 00 02 D5 00
-			29 00 03 D6 00 00
-			29 00 05 D7 00 00 00 00
-			29 00 04 E4 08 55 03
-			29 00 09 E6 00 01 FF FF FF FF FF FF
-			29 00 04 E7 00 00 00
-			29 00 08 E8 D5 FF FF FF 00 00 00
-			15 00 02 E9 FF
-			29 00 06 F0 12 03 20 00 FF
-			29 00 1B F1 A6 C8 EA E6 E4 CC E4 BE F0 B2 AA C7 FF 66 98 E3 87 C8 99 C8 8C BE 96 91 8F FF
-			15 00 02 F3 03
-			29 00 1B F4 FF FE FC FA F8 F4 F0 E8 E0 D0 C0 A0 80 7F 5F 3F 2F 1F 17 0F 0B 07 05 03 01 00
-			29 00 1B F5 FF FE FC FA F8 F4 F0 E8 E0 D0 C0 A0 80 7F 5F 3F 2F 1F 17 0F 0B 07 05 03 01 00
-			29 00 1B F6 FF FE FC FA F8 F4 F0 E8 E0 D0 C0 A0 80 7F 5F 3F 2F 1F 17 0F 0B 07 05 03 01 00
-			29 00 08 F7 00 00 00 00 00 00 00
-			29 00 08 F8 00 00 00 00 00 00 00
-			29 00 08 F9 00 00 00 00 00 00 00
-			29 00 1A FA 00 84 12 21 48 48 21 12 84 69 69 5A A5 96 96 A5 5A B7 DE ED 7B 7B ED DE B7
-			29 00 18 FB 00 12 0F FF FF FF 00 38 40 08 70 0B 40 19 50 21 C0 27 60 2D 00 00 0F
-			29 00 03 E3 20 21
+			29 00 02 27 AA
+                        29 00 02 48 02
+                        29 00 02 B6 20
+                        29 00 02 01 80
+                        29 00 02 02 38
+                        29 00 02 03 47
+                        29 00 02 04 8C
+                        29 00 02 05 0A
+                        29 00 02 06 82
+                        29 00 02 07 00
+                        29 00 02 08 14
+                        29 00 02 09 0A
+                        29 00 02 0A 0F
+                        29 00 02 0B 02
+                        29 00 02 0C 52
+                        29 00 02 0D 01
+                        29 00 02 0E 80
+                        29 00 02 0F 20
+                        29 00 02 10 20
+                        29 00 02 11 03
+                        29 00 02 12 1B
+                        29 00 02 13 63
+                        29 00 02 14 01
+                        29 00 02 15 23
+                        29 00 02 16 40
+                        29 00 02 17 00
+                        29 00 02 18 01
+                        29 00 02 19 23
+                        29 00 02 1A 40
+                        29 00 02 1B 00
+                        29 00 02 1E 46
+                        29 00 02 51 30
+                        29 00 02 1F 10
+                        29 00 02 2A 01
+
+
 			05 C8 01 11
 			05 14 01 29
                 ];
-
                 panel-exit-sequence = [
-                        05 00 01 28
-                        05 78 01 10
+
                 ];
 
                 disp_timings0: display-timings {
                         native-mode = <&dsi0_timing0>;
                         dsi0_timing0: timing0 {
-                                clock-frequency = <60000000>;//71900000
-                                hactive = <800>;
-                                vactive = <1280>;
-                                hfront-porch = <80>;//20
-                                hsync-len = <20>;
-                                hback-porch = <80>;//20
-                                vfront-porch = <20>;//10
-                                vsync-len = <4>;
-                                vback-porch = <12>;//4
+                                clock-frequency = <148500000>; //<60000000>;//71900000
+                                hactive = <1920>; //<800>;
+                                vactive = <1080>; //<1280>;
+                                hfront-porch = <140>; //<80>;//20
+                                hsync-len = <10>; //<20>;
+                                hback-porch = <130>;//20
+                                vfront-porch = <20>; //<20>;//10
+                                vsync-len = <10>;
+                                vback-porch = <15>; //<12>;//4
                                 hsync-active = <0>;
                                 vsync-active = <0>;
                                 de-active = <0>;
@@ -674,6 +655,7 @@ backlight: backlight {
 	status = "okay";
 	pinctrl-0 = <&i2c2m4_xfer>;
 #if defined(LCD_TYPE_MIPI0) || defined(LCD_TYPE_LVDS_7_0)
+/*
 	ft5x06@38 {
 		status = "okay";
 		compatible = "edt,edt-ft5406";
@@ -687,7 +669,7 @@ backlight: backlight {
 		
 
 	};
-
+*/
 #elif defined(LCD_TYPE_LVDS_10_1_1024x600_GT911)
 	gt9xx@14 {
 		compatible = "goodix,gt9xx";

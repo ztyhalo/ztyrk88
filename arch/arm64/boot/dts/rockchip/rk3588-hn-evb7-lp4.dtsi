@@ -10,7 +10,7 @@
 #include "rk3588-rk806-single.dtsi"
 
 #include "topeet_screen_lcds.dts"  //失能lcd显示
-//#include "topeet_camera_config.dtsi"
+#include "topeet_camera_config.dtsi"
 
 / {
 	/* If hdmirx node is disabled, delete the reserved-memory node here. */

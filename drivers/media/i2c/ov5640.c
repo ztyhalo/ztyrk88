@@ -176,6 +176,26 @@ enum ov5640_downsize_mode {
 	SCALING,
 };
 
+#define OV5640_LINK_FREQ_246MHZ		248000000
+static const s64 link_freq_menu_items[] = {
+	OV5640_LINK_FREQ_246MHZ
+};
+
+ /*
+  * MIPI CSI-2 link frequencies.
+  *
+  * Derived from the above defined pixel rate for bpp = (8, 16, 24) and
+  * data_lanes = (1, 2)
+  *
+  * link_freq = (pixel_rate * bpp) / (2 * data_lanes)
+  */
+ static const s64 ov5640_csi2_link_freqs[] = {
+	992000000, 888000000, 768000000, 744000000, 672000000, 672000000,
+	592000000, 592000000, 576000000, 576000000, 496000000, 496000000,
+	384000000, 384000000, 384000000, 336000000, 296000000, 288000000,
+	248000000, 192000000, 192000000, 192000000, 96000000,
+};
+
 struct reg_value {
 	u16 reg_addr;
 	u8 val;
@@ -1872,10 +1892,11 @@ static void ov5640_reset(struct ov5640_dev *sensor)
 	usleep_range(5000, 10000);
 
 	gpiod_set_value_cansleep(sensor->reset_gpio, 1);
-	usleep_range(1000, 2000);
+	// usleep_range(1000, 2000);
 
-	gpiod_set_value_cansleep(sensor->reset_gpio, 0);
-	usleep_range(20000, 25000);
+	// gpiod_set_value_cansleep(sensor->reset_gpio, 0);
+	// usleep_range(20000, 25000);
+	msleep(50);
 }
 
 static int ov5640_set_power_on(struct ov5640_dev *sensor)
@@ -2103,6 +2124,7 @@ static int ov5640_set_power(struct ov5640_dev *sensor, bool on)
 	int ret = 0;
 
 	if (on) {
+		printk("hndz ov5640_set_power: on\n");
 		ret = ov5640_set_power_on(sensor);
 		if (ret)
 			return ret;
@@ -2113,7 +2135,10 @@ static int ov5640_set_power(struct ov5640_dev *sensor, bool on)
 	}
 
 	if (sensor->ep.bus_type == V4L2_MBUS_CSI2_DPHY)
+	{
+		printk("hndz ov5640_set_power: mipi\n");
 		ret = ov5640_set_power_mipi(sensor, on);
+	}
 	else
 		ret = ov5640_set_power_dvp(sensor, on);
 	if (ret)
@@ -2269,7 +2294,7 @@ static int ov5640_set_fmt(struct v4l2_subdev *sd,
 	struct v4l2_mbus_framefmt *mbus_fmt = &format->format;
 	struct v4l2_mbus_framefmt *fmt;
 	int ret;
-
+	printk("hndz ov5640_set_fmt!\n");
 	if (format->pad != 0)
 		return -EINVAL;
 
@@ -2719,11 +2744,17 @@ static int ov5640_init_controls(struct ov5640_dev *sensor)
 	struct ov5640_ctrls *ctrls = &sensor->ctrls;
 	struct v4l2_ctrl_handler *hdl = &ctrls->handler;
 	int ret;
+	struct v4l2_ctrl *ctrl;
 
 	v4l2_ctrl_handler_init(hdl, 32);
 
 	/* we can use our own mutex for the ctrl lock */
 	hdl->lock = &sensor->lock;
+
+	ctrl = v4l2_ctrl_new_int_menu(hdl, NULL, V4L2_CID_LINK_FREQ,
+				      0, 0, link_freq_menu_items);
+	if (ctrl)
+		ctrl->flags |= V4L2_CTRL_FLAG_READ_ONLY;
 
 	/* Clock related controls */
 	ctrls->pixel_rate = v4l2_ctrl_new_std(hdl, ops, V4L2_CID_PIXEL_RATE,
@@ -2921,12 +2952,14 @@ static int ov5640_s_stream(struct v4l2_subdev *sd, int enable)
 
 	if (sensor->streaming == !enable) {
 		if (enable && sensor->pending_mode_change) {
+			printk("hndz ov5640_s_stream set mode!\n");
 			ret = ov5640_set_mode(sensor);
 			if (ret)
 				goto out;
 		}
 
 		if (enable && sensor->pending_fmt_change) {
+			printk("hndz ov5640_s_stream set fmt!\n");
 			ret = ov5640_set_framefmt(sensor, &sensor->fmt);
 			if (ret)
 				goto out;
@@ -2934,7 +2967,10 @@ static int ov5640_s_stream(struct v4l2_subdev *sd, int enable)
 		}
 
 		if (sensor->ep.bus_type == V4L2_MBUS_CSI2_DPHY)
+		{
+			printk("hndz ov5640_s_stream set mipi!\n");
 			ret = ov5640_set_stream_mipi(sensor, enable);
+		}
 		else
 			ret = ov5640_set_stream_dvp(sensor, enable);
 

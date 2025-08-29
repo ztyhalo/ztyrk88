@@ -802,7 +802,7 @@ static irqreturn_t rk_csirx_irq1_handler(int irq, void *ctx)
 			err_list->cnt++;
 			is_add_cnt = true;
 			csi2_find_err_vc((val >> 24) & 0xf, vc_info);
-			snprintf(err_str, CSI_ERRSTR_LEN, "%s(crc,vc:%s) ", err_str, vc_info);
+			// snprintf(err_str, CSI_ERRSTR_LEN, "%s(crc,vc:%s) ", err_str, vc_info);
 		}
 
 		if (val & CSIHOST_ERR1_ERR_ECC2) {

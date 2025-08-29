@@ -932,7 +932,9 @@ out:
 	*sysdiv = best_sysdiv;
 	*pll_prediv = OV5640_PLL_PREDIV;
 	*pll_mult = best_mult;
-
+	printk("%s: rate=%lu, best=%lu, "
+	       "prediv=%u, mult=%u, sysdiv=%u\n",
+	       __func__, rate, best, *pll_prediv, *pll_mult, *sysdiv);
 	return best;
 }
 
@@ -1321,6 +1323,10 @@ static int ov5640_get_sysclk(struct ov5640_dev *sensor)
 
 	sysclk = VCO / sysdiv / pll_rdiv * 2 / bit_div2x / sclk_rdiv;
 
+	printk("hndz vco is %d xvclk %d multiplier %d prediv %d!\n", VCO, xvclk, multiplier, prediv);
+	printk("hndz  SysDiv %d Pll_rdiv %d  Bit_div2x %d sclk_rdiv %d !\n",  sysdiv , pll_rdiv , bit_div2x , sclk_rdiv);
+	printk("hndz sys clk is %d!\n", sysclk);
+
 	return sysclk;
 }
 
@@ -1571,7 +1577,7 @@ static u64 ov5640_calc_pixel_rate(struct ov5640_dev *sensor)
 
 	rate = sensor->current_mode->vtot * sensor->current_mode->htot;
 	rate *= ov5640_framerates[sensor->current_fr];
-
+	printk("ov5640 pixel rate: %llu\n", rate);
 	return rate;
 }
 
@@ -3137,7 +3143,7 @@ static int ov5640_probe(struct i2c_client *client)
 			sensor->xclk_freq);
 		return -EINVAL;
 	}
-
+	printk("hndz ov5640_probe xclk_freq: %d\n", sensor->xclk_freq);
 	/* request optional power down pin */
 	sensor->pwdn_gpio = devm_gpiod_get_optional(dev, "powerdown",
 						    GPIOD_OUT_HIGH);

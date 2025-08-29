@@ -4579,7 +4579,8 @@ int rkcif_update_sensor_info(struct rkcif_stream *stream)
 	struct rkcif_sensor_info *sensor, *terminal_sensor;
 	struct v4l2_subdev *sensor_sd;
 	int ret = 0;
-
+	printk("hndz rkcif_update_sensor_info line %d !\n", __LINE__);
+	dump_stack();
 	sensor_sd = get_remote_sensor(stream, NULL);
 	if (!sensor_sd) {
 		v4l2_err(&stream->cifdev->v4l2_dev,
@@ -5375,6 +5376,7 @@ int rkcif_set_fmt(struct rkcif_stream *stream,
 	} else {
 		v4l2_err(&stream->cifdev->v4l2_dev,
 			 "terminal subdev does not exist\n");
+			 dump_stack();
 		return -EINVAL;
 	}
 
@@ -5518,7 +5520,7 @@ void rkcif_stream_init(struct rkcif_device *dev, u32 id)
 	memset(&pixm, 0, sizeof(pixm));
 	stream->id = id;
 	stream->cifdev = dev;
-
+	printk("stream_init id=%d device name %s\n", id,dev_name(dev->dev));
 	INIT_LIST_HEAD(&stream->buf_head);
 	INIT_LIST_HEAD(&stream->rx_buf_head);
 	INIT_LIST_HEAD(&stream->rx_buf_head_vicap);
@@ -5845,7 +5847,8 @@ static int rkcif_querycap(struct file *file, void *priv,
 {
 	struct rkcif_stream *stream = video_drvdata(file);
 	struct device *dev = stream->cifdev->dev;
-
+	printk("rkcif_querycap line:%d\n", __LINE__);
+	dump_stack();
 	strlcpy(cap->driver, dev->driver->name, sizeof(cap->driver));
 	strlcpy(cap->card, dev->driver->name, sizeof(cap->card));
 	snprintf(cap->bus_info, sizeof(cap->bus_info),
@@ -6182,7 +6185,8 @@ static int rkcif_register_stream_vdev(struct rkcif_stream *stream,
 	struct rkcif_vdev_node *node;
 	int ret = 0;
 	char *vdev_name;
-
+	printk("hndz rkcif_register_stream_vdev line:%d\n", __LINE__);
+	dump_stack();
 	if (dev->chip_id < CHIP_RV1126_CIF) {
 		if (is_multi_input) {
 			switch (stream->id) {

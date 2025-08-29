@@ -1578,6 +1578,7 @@
 	 return _rate / *pll_rdiv / *bit_div / *pclk_div;
  }
  
+ 
  static int ov5640_set_dvp_pclk(struct ov5640_dev *sensor)
  {
 	 u8 prediv, mult, sysdiv, pll_rdiv, bit_div, pclk_div;

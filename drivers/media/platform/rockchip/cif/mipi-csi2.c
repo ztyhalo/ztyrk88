@@ -812,7 +812,7 @@ static irqreturn_t rk_csirx_irq1_handler(int irq, void *ctx)
 			snprintf(err_str, CSI_ERRSTR_LEN, "%s(ecc2)", err_str);
 		}
 
-		pr_err("%s ERR1:0x%x %s\n", csi2->dev_name, val, err_str);
+		// pr_err("%s ERR1:0x%x %s\n", csi2->dev_name, val, err_str);
 
 		if (is_add_cnt) {
 			csi2->err_list[RK_CSI2_ERR_ALL].cnt++;

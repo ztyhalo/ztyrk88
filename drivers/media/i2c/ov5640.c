@@ -176,7 +176,7 @@ enum ov5640_downsize_mode {
 	SCALING,
 };
 
-#define OV5640_LINK_FREQ_246MHZ		248000000
+#define OV5640_LINK_FREQ_246MHZ		246000000
 static const s64 link_freq_menu_items[] = {
 	OV5640_LINK_FREQ_246MHZ
 };
@@ -2395,6 +2395,8 @@ static int ov5640_set_framefmt(struct ov5640_dev *sensor,
 		return -EINVAL;
 	}
 
+	printk("hndz ov5640_set_framefmt: fmt=0x%02x, mux=0x%02x, is_jpeg=%d\n",
+	       fmt, mux, is_jpeg);
 	/* FORMAT CONTROL00: YUV and RGB formatting */
 	ret = ov5640_write_reg(sensor, OV5640_REG_FORMAT_CONTROL00, fmt);
 	if (ret)

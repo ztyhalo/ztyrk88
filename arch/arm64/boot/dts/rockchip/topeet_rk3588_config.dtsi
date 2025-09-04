@@ -38,7 +38,7 @@
 	phy-mode = "rgmii-rxid";
 	clock_in_out = "output";
 
-//	snps,reset-gpio = <&gpio4 RK_PB3 GPIO_ACTIVE_LOW>;
+	snps,reset-gpio = <&gpio3 RK_PC6 GPIO_ACTIVE_LOW>;
 	snps,reset-active-low;
 	/* Reset time is 20ms, 100ms for rtl8211f */
 	snps,reset-delays-us = <0 20000 100000>;
@@ -63,10 +63,10 @@
 	phy-mode = "rgmii-rxid";
 	clock_in_out = "output";
 
-	//snps,reset-gpio = <&gpio3 RK_PB7 GPIO_ACTIVE_LOW>;
+	snps,reset-gpio = <&gpio3 RK_PB7 GPIO_ACTIVE_LOW>;
 	snps,reset-active-low;
-	/* Reset time is 20ms, 100ms for rtl8211f */
-	snps,reset-delays-us = <0 20000 100000>;
+	/* Reset time is 50ms, 100ms for bcm88 */
+	snps,reset-delays-us = <0 50000 100000>;
 
 	pinctrl-names = "default";
 	pinctrl-0 = <&gmac1_miim

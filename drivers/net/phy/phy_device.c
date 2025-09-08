@@ -914,7 +914,9 @@ struct phy_device *get_phy_device(struct mii_bus *bus, int addr, bool is_c45)
 
 	if (r)
 		return ERR_PTR(r);
-
+	printk("hndz Found %s PHY at %s:%d, ID 0x%08lx\n",
+	       is_c45 ? "Clause 45" : "Clause 22", bus->id, addr,
+	       (unsigned long)phy_id);
 	return phy_device_create(bus, addr, phy_id, is_c45, &c45_ids);
 }
 EXPORT_SYMBOL(get_phy_device);

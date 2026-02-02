@@ -24,6 +24,9 @@
 #include <media/v4l2-event.h>
 #include <media/v4l2-fwnode.h>
 #include <media/v4l2-subdev.h>
+#include <linux/rk-camera-module.h>
+
+#define OV5640_LANES			2
 
 /* min/typical/max system clock (xclk) frequencies */
 #define OV5640_XCLK_MIN  6000000
@@ -142,7 +145,7 @@ static const struct ov5640_pixfmt ov5640_formats[] = {
 	{ MEDIA_BUS_FMT_SGRBG8_1X8, V4L2_COLORSPACE_SRGB, },
 	{ MEDIA_BUS_FMT_SRGGB8_1X8, V4L2_COLORSPACE_SRGB, },
 };
-
+#define OV5640_NAME			"ov5640"
 /*
  * FIXME: remove this when a subdev API becomes available
  * to set the MIPI CSI-2 virtual channel.
@@ -314,7 +317,7 @@ static const struct reg_value ov5640_init_setting_30fps_VGA[] = {
 	{0x3815, 0x31, 0, 0}, {0x3800, 0x00, 0, 0}, {0x3801, 0x00, 0, 0},
 	{0x3802, 0x00, 0, 0}, {0x3803, 0x04, 0, 0}, {0x3804, 0x0a, 0, 0},
 	{0x3805, 0x3f, 0, 0}, {0x3806, 0x07, 0, 0}, {0x3807, 0x9b, 0, 0},
-	{0x3810, 0x00, 0, 0},
+	{0x3810, 0x00, 0, 0}, {0x300e, 0x45, 0, 0},
 	{0x3811, 0x10, 0, 0}, {0x3812, 0x00, 0, 0}, {0x3813, 0x06, 0, 0},
 	{0x3618, 0x00, 0, 0}, {0x3612, 0x29, 0, 0}, {0x3708, 0x64, 0, 0},
 	{0x3709, 0x52, 0, 0}, {0x370c, 0x03, 0, 0}, {0x3a02, 0x03, 0, 0},
@@ -1247,7 +1250,7 @@ static int ov5640_set_stream_dvp(struct ov5640_dev *sensor, bool on)
 
 static int ov5640_set_stream_mipi(struct ov5640_dev *sensor, bool on)
 {
-	int ret;
+	// int ret;
 
 	/*
 	 * Enable/disable the MIPI interface
@@ -1266,10 +1269,10 @@ static int ov5640_set_stream_mipi(struct ov5640_dev *sensor, bool on)
 	 * [2] = 1/0	: MIPI interface enable/disable
 	 * [1:0] = 01/00: FIXME: 'debug'
 	 */
-	ret = ov5640_write_reg(sensor, OV5640_REG_IO_MIPI_CTRL00,
-			       on ? 0x45 : 0x40);
-	if (ret)
-		return ret;
+	// ret = ov5640_write_reg(sensor, OV5640_REG_IO_MIPI_CTRL00,
+	// 		       on ? 0x45 : 0x40);
+	// if (ret)
+	// 	return ret;
 
 	return ov5640_write_reg(sensor, OV5640_REG_FRAME_CTRL01,
 				on ? 0x00 : 0x0f);
@@ -1971,7 +1974,7 @@ static int ov5640_set_power_mipi(struct ov5640_dev *sensor, bool on)
 	 * [3] = 0	: Power up MIPI LS Rx
 	 * [2] = 0	: MIPI interface disabled
 	 */
-	ret = ov5640_write_reg(sensor, OV5640_REG_IO_MIPI_CTRL00, 0x40);
+	ret = ov5640_write_reg(sensor, OV5640_REG_IO_MIPI_CTRL00, 0x44);
 	if (ret)
 		return ret;
 
@@ -2840,7 +2843,8 @@ static int ov5640_enum_frame_size(struct v4l2_subdev *sd,
 		return -EINVAL;
 	if (fse->index >= OV5640_NUM_MODES)
 		return -EINVAL;
-
+	if(fse->index >= ARRAY_SIZE(ov5640_mode_data))
+		return -EINVAL;
 	fse->min_width =
 		ov5640_mode_data[fse->index].hact;
 	fse->max_width = fse->min_width;
@@ -2856,24 +2860,63 @@ static int ov5640_enum_frame_interval(
 	struct v4l2_subdev_pad_config *cfg,
 	struct v4l2_subdev_frame_interval_enum *fie)
 {
-	struct ov5640_dev *sensor = to_ov5640_dev(sd);
+
 	struct v4l2_fract tpf;
-	int ret;
+
 
 	if (fie->pad != 0)
 		return -EINVAL;
-	if (fie->index >= OV5640_NUM_FRAMERATES)
+
+	if(fie->index >= ARRAY_SIZE(ov5640_mode_data))
 		return -EINVAL;
 
 	tpf.numerator = 1;
-	tpf.denominator = ov5640_framerates[fie->index];
-
-	ret = ov5640_try_frame_interval(sensor, &tpf,
-					fie->width, fie->height);
-	if (ret < 0)
-		return -EINVAL;
-
+	tpf.denominator = ov5640_framerates[ov5640_mode_data[fie->index].max_fps];
+	
 	fie->interval = tpf;
+	fie->width = ov5640_mode_data[fie->index].hact;
+	fie->height = ov5640_mode_data[fie->index].vact;
+
+	return 0;
+}
+
+static void ov5640_get_module_inf(struct ov5640_dev *sensor,
+				struct rkmodule_inf *inf)
+{
+	memset(inf, 0, sizeof(*inf));
+	strscpy(inf->base.sensor, OV5640_NAME, sizeof(inf->base.sensor));
+	strscpy(inf->base.module, "default",
+		sizeof(inf->base.module));
+	strscpy(inf->base.lens, "default", sizeof(inf->base.lens));
+}
+static long ov5640_ioctl(struct v4l2_subdev *sd, unsigned int cmd, void *arg)
+{
+	struct ov5640_dev *sensor = to_ov5640_dev(sd);
+	long ret = 0;
+
+	switch (cmd) {
+	case RKMODULE_GET_MODULE_INFO:
+			ov5640_get_module_inf(sensor, (struct rkmodule_inf *)arg);
+			break;
+	default:
+			ret = -ENOIOCTLCMD;
+			break;
+	}
+
+	return ret;
+}
+
+static int ov5640_g_mbus_config(struct v4l2_subdev *sd, unsigned int pad_id,
+				struct v4l2_mbus_config *config)
+{
+	u32 val = 0;
+
+	val = 1 << (OV5640_LANES - 1) |
+			V4L2_MBUS_CSI2_CHANNEL_0 |
+			V4L2_MBUS_CSI2_CONTINUOUS_CLOCK;
+		config->type = V4L2_MBUS_CSI2_DPHY;
+	config->flags = val;
+
 	return 0;
 }
 
@@ -2995,6 +3038,7 @@ static const struct v4l2_subdev_core_ops ov5640_core_ops = {
 	.log_status = v4l2_ctrl_subdev_log_status,
 	.subscribe_event = v4l2_ctrl_subdev_subscribe_event,
 	.unsubscribe_event = v4l2_event_subdev_unsubscribe,
+	.ioctl = ov5640_ioctl,
 };
 
 static const struct v4l2_subdev_video_ops ov5640_video_ops = {
@@ -3009,6 +3053,7 @@ static const struct v4l2_subdev_pad_ops ov5640_pad_ops = {
 	.set_fmt = ov5640_set_fmt,
 	.enum_frame_size = ov5640_enum_frame_size,
 	.enum_frame_interval = ov5640_enum_frame_interval,
+	.get_mbus_config = ov5640_g_mbus_config,
 };
 
 static const struct v4l2_subdev_ops ov5640_subdev_ops = {

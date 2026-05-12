@@ -1880,7 +1880,7 @@ int rkcif_plat_init(struct rkcif_device *cif_dev, struct device_node *node, int 
 	cif_dev->rdbk_debug = 0;
 	if (cif_dev->chip_id == CHIP_RV1126_CIF_LITE)
 		cif_dev->isr_hdl = rkcif_irq_lite_handler;
-
+	printk("hndz cif_dev->chip_id=%d\n", cif_dev->chip_id);
 	if (cif_dev->chip_id < CHIP_RV1126_CIF) {
 		if (cif_dev->inf_id == RKCIF_MIPI_LVDS) {
 			rkcif_stream_init(cif_dev, RKCIF_STREAM_MIPI_ID0);

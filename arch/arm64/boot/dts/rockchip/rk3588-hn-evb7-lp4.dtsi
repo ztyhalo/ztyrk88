@@ -10,7 +10,7 @@
 #include "rk3588-rk806-single.dtsi"
 
 #include "topeet_screen_lcds.dts"  //失能lcd显示
-//#include "topeet_camera_config.dtsi"
+#include "topeet_camera_config.dtsi"
 
 / {
 	/* If hdmirx node is disabled, delete the reserved-memory node here. */
@@ -174,7 +174,6 @@
 		vin-supply = <&vcc12v_dcin>;
 	};
 
-#if 0
 	vcc5v0_host: vcc5v0-host {
 		compatible = "regulator-fixed";
 		regulator-name = "vcc5v0_host";
@@ -183,12 +182,11 @@
 		regulator-min-microvolt = <5000000>;
 		regulator-max-microvolt = <5000000>;
 		enable-active-high;
-		gpio = <&gpio4 RK_PB0 GPIO_ACTIVE_HIGH>;
+		gpio = <&gpio4 RK_PB6 GPIO_ACTIVE_HIGH>;
 		vin-supply = <&vcc5v0_usb>;
 		pinctrl-names = "default";
 		pinctrl-0 = <&vcc5v0_host_en>;
 	};
-#endif
 
 /*
 	vcc_mipicsi0: vcc-mipicsi0-regulator {
@@ -546,7 +544,7 @@
 
 	usb {
 		vcc5v0_host_en: vcc5v0-host-en {
-			rockchip,pins = <4 RK_PB0 RK_FUNC_GPIO &pcfg_pull_none>;
+			rockchip,pins = <4 RK_PB6 RK_FUNC_GPIO &pcfg_pull_none>;
 		};
 	};
 
@@ -585,6 +583,10 @@
 	status = "okay";
 	//phy-supply = <&vcc5v0_host>;
 	rockchip,typec-vbus-det;
+};
+
+&u2phy2_host {
+	phy-supply = <&vcc5v0_host>;
 };
 
 #if 0

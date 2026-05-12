@@ -607,7 +607,7 @@ static int rockchip_canfd_rx(struct net_device *ndev)
 
 	return 1;
 }
-
+static int canerrMark = 0;
 static int rockchip_canfd_err(struct net_device *ndev, u32 isr)
 {
 	struct rockchip_canfd *rcan = netdev_priv(ndev);
@@ -624,7 +624,16 @@ static int rockchip_canfd_err(struct net_device *ndev, u32 isr)
 	txerr = rockchip_canfd_read(rcan, CAN_TX_ERR_CNT);
 	sta_reg = rockchip_canfd_read(rcan, CAN_STATE);
 	err_reg = rockchip_canfd_read(rcan, CAN_ERR_CODE);
+
 	// printk("hndz canfd error status 0x%x sta_reg 0x%x irs 0x%x!\n", err_reg, sta_reg, isr);
+
+	if((canerrMark%15000) < 5)
+	{
+
+		printk("hndz canfd%s error status 0x%x sta_reg 0x%x irs 0x%x!\n", ndev->name, err_reg, sta_reg, isr);
+	}
+	canerrMark++;
+
 
 	if (skb) {
 		cf->data[6] = txerr;

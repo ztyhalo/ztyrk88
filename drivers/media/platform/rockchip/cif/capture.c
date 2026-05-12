@@ -4472,7 +4472,6 @@ static void rkcif_sync_crop_info(struct rkcif_stream *stream)
 		ret = v4l2_subdev_call(dev->terminal_sensor.sd,
 				       pad, get_selection, NULL,
 				       &input_sel);
-		printk("hndz func %s line %d !\n", __func__, __LINE__);
 		if (!ret) {
 			stream->crop[CROP_SRC_SENSOR] = input_sel.r;
 			stream->crop_enable = true;
@@ -4537,13 +4536,8 @@ static int rkcif_sanity_check_fmt(struct rkcif_stream *stream,
 	if (s_crop)
 		crop = (struct v4l2_rect *)s_crop;
 	else
-	{
-		printk("hndz &stream->crop[CROP_SRC_ACT] crop->width %d!\n", stream->crop[CROP_SRC_ACT].width);
 		crop = &stream->crop[CROP_SRC_ACT];
-	}
 
-	printk("hndz crop->width %d  crop->left %d input.width %d!\n", crop->width , crop->left , input.width);
-	printk("hndz crop->height %d crop->top %d input.height %d!\n", crop->height ,crop->top , input.height);
 	if (crop->width + crop->left > input.width ||
 	    crop->height + crop->top > input.height) {
 		v4l2_err(v4l2_dev, "crop size is bigger than input\n");
@@ -5518,7 +5512,7 @@ void rkcif_stream_init(struct rkcif_device *dev, u32 id)
 	memset(&pixm, 0, sizeof(pixm));
 	stream->id = id;
 	stream->cifdev = dev;
-	printk("stream_init id=%d device name %s\n", id,dev_name(dev->dev));
+
 	INIT_LIST_HEAD(&stream->buf_head);
 	INIT_LIST_HEAD(&stream->rx_buf_head);
 	INIT_LIST_HEAD(&stream->rx_buf_head_vicap);

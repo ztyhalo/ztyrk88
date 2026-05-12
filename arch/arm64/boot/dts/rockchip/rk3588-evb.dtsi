@@ -341,11 +341,11 @@
 };
 
 &u2phy2 {
-	status = "okay";
+	status = "disable";
 };
 
 &u2phy3 {
-	status = "okay";
+	status = "disable";
 };
 
 &u2phy0_otg {
@@ -357,27 +357,27 @@
 };
 
 &u2phy2_host {
-	status = "okay";
+	status = "disable";
 };
 
 &u2phy3_host {
-	status = "okay";
+	status = "disable";
 };
 
 &usb_host0_ehci {
-	status = "okay";
+	status = "disable";
 };
 
 &usb_host0_ohci {
-	status = "okay";
+	status = "disable";
 };
 
 &usb_host1_ehci {
-	status = "okay";
+	status = "disable";
 };
 
 &usb_host1_ohci {
-	status = "okay";
+	status = "disable";
 };
 
 &usbdp_phy0 {
